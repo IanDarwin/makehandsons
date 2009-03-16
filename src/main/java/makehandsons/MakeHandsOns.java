@@ -1,7 +1,15 @@
 package filesub;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 /** The FileSub program looks through
  * directories recursively looking for
@@ -21,7 +29,11 @@ public class FileSub {
 		f.searchFiles(new File("."));
 	}
 
-	private void loadPatterns() {
+	/** Load (and compile) the Pattern file, a list
+	 * of x=y, where x is a regex pattern and y
+	 * is a replacement value.
+	 */
+	void loadPatterns() {
 		Properties p = new Properties();
 		InputStream is = getClass().getResourceAsStream("filesub.properties");
 		try {
@@ -29,9 +41,15 @@ public class FileSub {
 		} catch (IOException e) {
 			throw new RuntimeException("Error loading patterns", e);
 		}
+		
+		for (Object k : p.keySet()) {
+			String key = (String)k;
+			Pattern pat = Pattern.compile(key);
+			String repl = p.getProperty(key);
+		}
 	}
 
-	private void searchFiles(File dir) {
+	void searchFiles(File dir) {
 		if (dir.isDirectory()) {
 		File[] list = dir.listFiles(acceptFilter );
 		for (File f : list) {
