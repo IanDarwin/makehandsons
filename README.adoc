@@ -1,10 +1,10 @@
 This makes the student todo exercise directories directly from the solutions.
 
 This module performs various substitutions on files. It creates a copy
-of the directory it is started in, with the filename transformed by
-removing "solution" from it. This is baked into the code.
+of of the first directory into the second (which must not exist),
+making all the line-based changes shown below.
 
-As well, the following line-based changes are baked into the code:
+The following line-based changes are baked into the code:
 
 	//- through to //+ inclusive are DELETED from the output
 
