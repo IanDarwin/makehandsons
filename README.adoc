@@ -1,0 +1,21 @@
+This makes the student todo exercise directories directly from the solutions.
+
+This module performs various substitutions on files. It creates a copy
+of the directory it is started in, with the filename transformed by
+removing "solution" from it. This is baked into the code.
+
+As well, the following line-based changes are baked into the code:
+
+	//- through to //+ inclusive are DELETED from the output
+
+As well, the following text-based changes are made, only to file
+whose extentions are listed in XXX.
+The texts are loaded from a properties file to be easy to change.
+The input format is: regex=replacement
+The rough initial list looks like this:
+
+	//T text -> // TODO text
+	//H text -> //*HINT* text
+	//R text -> text
+	"solution" -> ""
+	/usr/home/ian -> C:/
