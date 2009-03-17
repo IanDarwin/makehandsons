@@ -59,7 +59,7 @@ public class MakeHandsOns {
 	 */
 	void loadPatterns() {
 		Properties p = new Properties();
-		InputStream is = getClass().getResourceAsStream("/filesub.properties");
+		InputStream is = getClass().getResourceAsStream("/makehandsons.properties");
 		try {
 			p.load(is);
 		} catch (IOException e) {
