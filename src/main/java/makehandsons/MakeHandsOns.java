@@ -3,26 +3,28 @@ package filesub;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import com.darwinsys.io.FileIO;
 
-/** The FileSub program looks through
+/** The MakeHandsOns (mkhos) program looks through
  * directories recursively, copying each file
- * to the output directory. If the file
- * is .java or .xml, substitution on each line with a given
+ * to the output directory. If the file is a text file (ends in
+ * .java or .xml o ...), do substitution on each line with a given
  * set of replacement patterns (patterns and their
  * replacements are loaded from a Properties file).
  * @author Ian Darwin
  */
 public class FileSub {
+	
+	private static Logger log = Logger.getLogger("mytools.makehos");
 	
 	/** The file extens that get replacements done */
 	final static String[] SUB_TEXT_FILE_EXTENS = {
@@ -74,12 +76,12 @@ public class FileSub {
 
 	/** Work through the starting directory, mapping it to destDir */
 	void searchFiles(File startDir) {
-		System.out.printf("FileSub.searchFiles(%s)%n", startDir);
+		log.fine(String.format("FileSub.searchFiles(%s)%n", startDir));
 		if (startDir.isDirectory()) {
 			String name = startDir.getName();
 			for (String dir : IGNORE_DIRS) {
 				if (dir.equals(name)) {
-					System.out.println("IGNORING " + startDir);
+					log.finer("IGNORING " + startDir);
 					return;
 				}
 			}
@@ -105,10 +107,10 @@ public class FileSub {
 	private void processFile(File file) {
 		String absPath = file.getAbsolutePath();
 		String newAbsPath = absPath.replace(REMOVE_FROM_PATH, "");
-		System.out.println("NEW ABS PATH = " + newAbsPath);
+		log.fine("NEW ABS PATH = " + newAbsPath);
 		File newFile = new File(newAbsPath);
 		newFile.getParentFile().mkdirs();
-		System.out.printf("FileSub.processFile(%s->%s)%n", file, newAbsPath);		
+		log.fine(String.format("FileSub.processFile(%s->%s)%n", file, newAbsPath));		
 		if (isTextFile(file.getName())) {
 			processTextFile(file);
 		} else {						// copy as binary
@@ -126,7 +128,7 @@ public class FileSub {
 	//-
 	/* This should not appear in the output */
 	//+
-	//R this is a test for the "cut mode" process in processText()
+	//R // This should appear, and is a test for the "cut mode" process in processText()
 	
 	private void processTextFile(File file) {
 		BufferedReader is = null;
@@ -155,28 +157,16 @@ public class FileSub {
 		} catch (IOException e) {
 			System.err.printf("I/O Error on %s: %s%n", file, e);
 		} finally {
-			if (pw != null)
-				pw.close();
-			if (is != null)
+			if (is != null) {
 				try {
 					is.close();
 				} catch (IOException annoyingLittleCheckedException) {
 					annoyingLittleCheckedException.printStackTrace();
 				}
+			}
+			if (pw != null) {
+				pw.close();
+			}
 		}
 	}
-	
-	FilenameFilter acceptFilter = new FilenameFilter() {
-
-		public boolean accept(File dir, String name) {
-			String[] okSuffixes = { ".xml", ".java" };
-			for (String suffix : okSuffixes) {
-				if (name.endsWith(suffix)) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-	};
 }
