@@ -1,4 +1,4 @@
-package filesub;
+package makehandsons;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,7 +22,7 @@ import com.darwinsys.io.FileIO;
  * replacements are loaded from a Properties file).
  * @author Ian Darwin
  */
-public class FileSub {
+public class MakeHandsOns {
 	
 	private static Logger log = Logger.getLogger("mytools.makehos");
 	
@@ -43,7 +43,7 @@ public class FileSub {
 	final static String[] IGNORE_DIRS = { "CVS", ".metadata" };
 
 	public static void main(String[] args) {
-		FileSub f = new FileSub();
+		MakeHandsOns f = new MakeHandsOns();
 		f.loadPatterns();
 		for (String arg : args) {
 			f.searchFiles(new File(arg));
