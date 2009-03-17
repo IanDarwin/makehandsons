@@ -134,11 +134,13 @@ public class FileSub {
 		BufferedReader is = null;
 		PrintWriter pw = null;
 		boolean inCutMode = false;
+		boolean fileChanged = false;
 		try {
 			pw = new PrintWriter(file.getAbsolutePath().replace(REMOVE_FROM_PATH, ""));
 			is = new BufferedReader(new FileReader(file));
 			String line;
 			while ((line = is.readLine()) != null) {
+				String oldLine = line;
 				if (inCutMode) {
 					if (CUTMODE_END.matcher(line).matches()) {
 						inCutMode = false;
@@ -153,10 +155,16 @@ public class FileSub {
 					line = p.matcher(line).replaceAll(pattMap.get(p));
 				}
 				pw.println(line);
+				if (line != oldLine) {
+					fileChanged = true;
+				}
 			}
 		} catch (IOException e) {
 			System.err.printf("I/O Error on %s: %s%n", file, e);
 		} finally {
+			if (fileChanged) {
+				System.out.println(file + " had 1+ change(s)"); // XXX run diff
+			}
 			if (inCutMode) {
 				System.err.println("WARNING" + file + " file ends in cut mode!");
 			}
