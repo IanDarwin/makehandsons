@@ -18,7 +18,7 @@ import com.darwinsys.io.FileIO;
  * directories recursively, copying each file
  * to the output directory. If the file
  * is .java or .xml, substitution on each line with a given
- * set of replacement patterns (patterns and
+ * set of replacement patterns (patterns and their
  * replacements are loaded from a Properties file).
  * @author Ian Darwin
  */
@@ -30,7 +30,6 @@ public class FileSub {
 		".xml",
 		".jsp",
 		".html",
-		".txt",
 		".xhtml"
 	};
 	
@@ -120,6 +119,11 @@ public class FileSub {
 		}		
 	}
 	
+	//-
+	/* This should not appear in the output */
+	//+
+	//R this is a test for the "cut mode" process in processText()
+	
 	private void processTextFile(File file) {
 		BufferedReader is = null;
 		PrintWriter pw = null;
@@ -127,7 +131,18 @@ public class FileSub {
 			pw = new PrintWriter(file.getAbsolutePath().replace(REMOVE_FROM_PATH, ""));
 			is = new BufferedReader(new FileReader(file));
 			String line;
+			boolean inCutMode = false;
 			while ((line = is.readLine()) != null) {
+				if (inCutMode) {
+					if (line.indexOf("//+") != -1) {
+						inCutMode = false;
+					}
+					continue;
+				}
+				if (line.indexOf("//-") != -1) {
+					inCutMode = true;
+					continue;
+				}
 				for (Pattern p : pattMap.keySet()) {
 					line = p.matcher(line).replaceAll(pattMap.get(p));
 				}
