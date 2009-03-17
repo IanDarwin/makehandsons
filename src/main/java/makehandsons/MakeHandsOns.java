@@ -27,10 +27,11 @@ public class FileSub {
 	/** The file extens that get replacements done */
 	final static String[] SUB_TEXT_FILE_EXTENS = {
 		".java",
-		".xml",
 		".jsp",
 		".html",
-		".xhtml"
+		".project",
+		".xhtml",
+		".xml",
 	};
 	
 	/** The part of the directory name that gets removed. */
@@ -119,6 +120,9 @@ public class FileSub {
 		}		
 	}
 	
+	private final static Pattern CUTMODE_START = Pattern.compile("^\\s+//-");
+	private final static Pattern CUTMODE_END = Pattern.compile("^\\s+//\\+");
+	
 	//-
 	/* This should not appear in the output */
 	//+
@@ -134,12 +138,12 @@ public class FileSub {
 			boolean inCutMode = false;
 			while ((line = is.readLine()) != null) {
 				if (inCutMode) {
-					if (line.indexOf("//+") != -1) {
+					if (CUTMODE_END.matcher(line).matches()) {
 						inCutMode = false;
 					}
 					continue;
 				}
-				if (line.indexOf("//-") != -1) {
+				if (CUTMODE_START.matcher(line).matches()) {
 					inCutMode = true;
 					continue;
 				}
