@@ -133,11 +133,11 @@ public class FileSub {
 	private void processTextFile(File file) {
 		BufferedReader is = null;
 		PrintWriter pw = null;
+		boolean inCutMode = false;
 		try {
 			pw = new PrintWriter(file.getAbsolutePath().replace(REMOVE_FROM_PATH, ""));
 			is = new BufferedReader(new FileReader(file));
 			String line;
-			boolean inCutMode = false;
 			while ((line = is.readLine()) != null) {
 				if (inCutMode) {
 					if (CUTMODE_END.matcher(line).matches()) {
@@ -157,6 +157,9 @@ public class FileSub {
 		} catch (IOException e) {
 			System.err.printf("I/O Error on %s: %s%n", file, e);
 		} finally {
+			if (inCutMode) {
+				System.err.println("WARNING" + file + " file ends in cut mode!");
+			}
 			if (is != null) {
 				try {
 					is.close();
