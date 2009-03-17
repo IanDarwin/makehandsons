@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 import com.darwinsys.io.FileIO;
 
-/** The MakeHandsOns (mkhos) program looks through
+/** The MakeHandsOns program looks through the given
  * directories recursively, copying each file
  * to the output directory. If the file is a text file (ends in
  * .java or .xml o ...), do substitution on each line with a given
@@ -142,6 +142,9 @@ public class MakeHandsOns {
 			while ((line = is.readLine()) != null) {
 				String oldLine = line;
 				if (inCutMode) {
+					if (CUTMODE_START.matcher(line).matches()) {
+						System.err.println("WARNING: " + file + " has nested CUT_START codes");
+					}
 					if (CUTMODE_END.matcher(line).matches()) {
 						inCutMode = false;
 					}
@@ -163,10 +166,10 @@ public class MakeHandsOns {
 			System.err.printf("I/O Error on %s: %s%n", file, e);
 		} finally {
 			if (fileChanged) {
-				System.out.println(file + " had 1+ change(s)"); // XXX run diff
+				System.out.println(file + " had change(s)"); // XXX run diff
 			}
 			if (inCutMode) {
-				System.err.println("WARNING" + file + " file ends in cut mode!");
+				System.err.println("WARNING: " + file + " file ends in cut mode!");
 			}
 			if (is != null) {
 				try {
