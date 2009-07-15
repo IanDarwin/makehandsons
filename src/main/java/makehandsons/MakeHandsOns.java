@@ -32,6 +32,7 @@ public class MakeHandsOns {
 		".jsp",
 		".html",
 		".project",
+		".properties",
 		".xhtml",
 		".xml",
 	};
@@ -39,6 +40,14 @@ public class MakeHandsOns {
 	/** The part of the directory name that gets removed. */
 	final static String REMOVE_FROM_PATH = "solution";
 	
+	private final static Pattern CUTMODE_START = Pattern.compile("^\\s+//-");
+	private final static Pattern CUTMODE_END = Pattern.compile("^\\s+//\\+");
+	
+	//-
+	/* This should not appear in the output */
+	//+
+	//R // This should appear, and is a test for the "cut mode" process in processText()
+
 	/** directories to ignore */
 	final static String[] IGNORE_DIRS = { "CVS", ".metadata" };
 
@@ -121,15 +130,7 @@ public class MakeHandsOns {
 			}
 		}		
 	}
-	
-	private final static Pattern CUTMODE_START = Pattern.compile("^\\s+//-");
-	private final static Pattern CUTMODE_END = Pattern.compile("^\\s+//\\+");
-	
-	//-
-	/* This should not appear in the output */
-	//+
-	//R // This should appear, and is a test for the "cut mode" process in processText()
-	
+		
 	private void processTextFile(File file) {
 		BufferedReader is = null;
 		PrintWriter pw = null;
