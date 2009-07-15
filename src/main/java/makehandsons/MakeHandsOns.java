@@ -2,17 +2,18 @@ package makehandsons;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
-import com.darwinsys.io.FileIO;
 
 /** The MakeHandsOns program looks through the given
  * directories recursively, copying each file
@@ -124,13 +125,39 @@ public class MakeHandsOns {
 			processTextFile(file);
 		} else {						// copy as binary
 			try {
-				FileIO.copyFile(file, newFile);
+				copyFile(file, newFile);
 			} catch (IOException e) {
 				System.err.println("Failed to copy " + file + "; " + e);
 			}
 		}		
 	}
-		
+	
+	private static int BLKSIZ = 4096;
+	
+	/** Copied from c.d.io.FileIO */
+	public static void copyFile(File file, File target) throws IOException {
+		if (!file.exists() || !file.isFile() || !(file.canRead())) {
+			throw new IOException(file + " is not a readable file");
+		}
+		File dest = target;
+		if (target.isDirectory()) {
+			dest = new File(dest, file.getName());
+		}
+		InputStream is = null;
+		OutputStream os  = null;
+		try {
+			is = new FileInputStream(file);
+			os = new FileOutputStream(dest);
+			int count = 0;		// the byte count
+			byte[] b = new byte[BLKSIZ];	// the bytes read from the file
+			while ((count = is.read(b)) != -1) {
+				os.write(b, 0, count);
+			}
+		} finally {
+			is.close();
+			os.close();
+		}
+	}	
 	private void processTextFile(File file) {
 		BufferedReader is = null;
 		PrintWriter pw = null;
