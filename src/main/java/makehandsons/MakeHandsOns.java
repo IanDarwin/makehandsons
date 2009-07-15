@@ -154,8 +154,10 @@ public class MakeHandsOns {
 				os.write(b, 0, count);
 			}
 		} finally {
-			is.close();
-			os.close();
+			if (is != null)
+				is.close();
+			if (os != null)
+				os.close();
 		}
 	}	
 	private void processTextFile(File file) {
