@@ -1,21 +1,86 @@
+Introduction to MakeHandsOn
+
 This makes the student todo exercise directories directly from the solutions.
 
 This module performs various substitutions on files. It creates a copy
-of of the first directory into the second (which must not exist),
+of the first directory into the second (which must not exist),
 making all the line-based changes shown below.
+
+MARKING UP THE SOLUTION VERSION OF FILES
 
 The following line-based changes are baked into the code:
 
 	//- through to //+ inclusive are DELETED from the output
+	
+Other changes are configurable (see below). The following are currently
+provided:
 
-As well, the following text-based changes are made, only to file
-whose extentions are listed in XXX.
-The texts are loaded from a properties file to be easy to change.
-The input format is: regex=replacement
-The rough initial list looks like this:
+1) Mark TODO lines with //T instead of TODO so the solution doesn't 
+show in Tasks Window in Eclipse. //T (with a space after!) gets turned 
+into // TODO
 
-	//T text -> // TODO text
-	//H text -> //*HINT* text
-	//R text -> text
-	"solution" -> ""
-	/usr/home/ian -> C:/
+2) //H  becomes // *HINT*
+
+3) Use //R for replacement variables, that is, placeholders for stuff that gets cut
+//R
+
+4) Remove "solution" from filenames in config files (so be warned: don't
+use the word 'solution' unless you mean it to go away in the non-solution.
+This sounds painful but is required so that the Eclipse .project/.classpath
+files will work
+
+5) Finally, we replace absolute paths. At present /usr/home/ian or
+/home/ian get turned into C:/.  If you are not Ian and have used any
+absolute paths, you might have to change the properties file as
+discussed below.
+
+Changes are made only to files whose extentions are listed in 
+SUB_TEXT_FILE_EXTENS in the program, which currently includes
+the filename endings 
+		".java",
+		".jsp",
+		".html",
+		".project",
+		".properties",
+		".xhtml", and
+		".xml".
+
+Note that no changes will be made in directories named CVS or .metadata.
+
+CUSTOMIZING
+
+The text substitions are loaded from a properties file to be easy to change, but
+if you do the documenation above will not strictly apply!
+
+The input format is: regex=replacement.  If you are determined to change it,
+consult the included properties file to see the examples.
+
+You can change this by editing makehandson.properties AND
+re-generating the Jar file (see GENERATING below). You could probably
+just put the new jar on your CLASSPATH ahead of the jar file, but this
+is not documented.
+
+GENERATING THE NON_SOLUTION VERSIONS FROM THE MARKED-UP SOLUTIONS
+
+Each folder should be named foosolution, e.g., ex41solution. This will create ex41.
+
+Then run "java -jar makehandson.jar *solution" in the crsXXX
+directory. This will create ex11 from ex11solution, and so on.
+
+REBUILDING THE PROGRAM
+
+The source file for makehandson is an Eclipse project. Open it in Eclipse
+and make any changes (this step is required as it will also compile the files!!).
+
+Then run "ant jar" and it will create a Jar file in the project directory.
+
+MODIFYING THE PROGRAM
+
+If you want to modify the program (you probably shouldn't, ...), you can get it
+from my public CVS repository, or I can mail you a copy. The former way allows
+you to get updates automatically, while the latter does not.
+
+Enjoy.
+
+Ian Darwin
+ian@darwinsys.com
