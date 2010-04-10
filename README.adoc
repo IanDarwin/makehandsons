@@ -1,5 +1,7 @@
 Introduction to MakeHandsOn
 
+$Id$
+
 This makes the student todo exercise directories directly from the solutions.
 
 This module performs various substitutions on files. It creates a copy
