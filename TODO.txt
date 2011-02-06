@@ -1,6 +1,5 @@
+Make a junit test instead of inspecting the output manually.
+
 Run diff(1) on files that report changes.
 
-Get rid of //T and just expand them manually in the solution?
-	NO, because you don't want TODO tags in the masters!
-
-Build both fooSolution and foo from e.g., fooMaster
+Maybe: Build both fooSolution and foo from e.g., fooMaster
