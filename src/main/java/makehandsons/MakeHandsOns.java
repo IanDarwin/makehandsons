@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
  */
 public class MakeHandsOns {
 	
+	private static final String PROPERTIES_FILENAME = "/makehandsons.properties";
+
 	private static Logger log = Logger.getLogger("makehandsons");
 	
 	Properties sysProps = System.getProperties();
@@ -74,7 +76,10 @@ public class MakeHandsOns {
 	 */
 	void loadPatterns() {
 		Properties p = new Properties();
-		InputStream is = getClass().getResourceAsStream("/makehandsons.properties");
+		InputStream is = getClass().getResourceAsStream(PROPERTIES_FILENAME);
+		if (is == null) {
+			throw new RuntimeException("Could not load " + PROPERTIES_FILENAME + " from classpath.");
+		}
 		try {
 			p.load(is);
 		} catch (IOException e) {
