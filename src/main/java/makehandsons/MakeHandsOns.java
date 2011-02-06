@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -25,7 +26,9 @@ import java.util.regex.Pattern;
  */
 public class MakeHandsOns {
 	
-	private static Logger log = Logger.getLogger("mytools.makehos");
+	private static Logger log = Logger.getLogger("makehandsons");
+	
+	Properties sysProps = System.getProperties();
 	
 	/** The file extens that get replacements done */
 	final static String[] SUB_TEXT_FILE_EXTENS = {
@@ -34,6 +37,7 @@ public class MakeHandsOns {
 		".html",
 		".project",
 		".properties",
+		".txt",
 		".xhtml",
 		".xml",
 	};
@@ -53,6 +57,7 @@ public class MakeHandsOns {
 	final static String[] IGNORE_DIRS = { "CVS", ".metadata" };
 
 	public static void main(String[] args) {
+		log.setLevel(Level.FINEST);
 		MakeHandsOns f = new MakeHandsOns();
 		f.loadPatterns();
 		for (String arg : args) {
@@ -78,8 +83,17 @@ public class MakeHandsOns {
 		
 		for (Object k : p.keySet()) {
 			String key = (String)k;
-			Pattern pat = Pattern.compile(key);
 			String repl = p.getProperty(key);
+			// If key begins with ${...}, substitute key now.
+			if (key.charAt(0) == '$') {
+				String propName = key.substring(2, key.length() - 1);
+				String newKey = sysProps.getProperty(propName);
+				log.fine(String.format(
+					"loadPatterns(): prop %s -> %s", propName, newKey));
+				key = newKey;
+			}
+			log.fine(String.format("loadPatterns() key '%s' value '%s'", key, repl));
+			Pattern pat = Pattern.compile(key);
 			pattMap.put(pat, repl);
 		}
 	}
@@ -120,7 +134,7 @@ public class MakeHandsOns {
 		log.fine("NEW ABS PATH = " + newAbsPath);
 		File newFile = new File(newAbsPath);
 		newFile.getParentFile().mkdirs();
-		log.fine(String.format("FileSub.processFile(%s->%s)%n", file, newAbsPath));		
+		log.info(String.format("FileSub.processFile(%s->%s)%n", file, newAbsPath));		
 		if (isTextFile(file.getName())) {
 			processTextFile(file);
 		} else {						// copy as binary
@@ -134,7 +148,7 @@ public class MakeHandsOns {
 	
 	private static int BLKSIZ = 4096;
 	
-	/** Copied from c.d.io.FileIO */
+	/** Copy a BINARY file. Copied from c.d.io.FileIO */
 	public static void copyFile(File file, File target) throws IOException {
 		if (!file.exists() || !file.isFile() || !(file.canRead())) {
 			throw new IOException(file + " is not a readable file");
@@ -159,7 +173,9 @@ public class MakeHandsOns {
 			if (os != null)
 				os.close();
 		}
-	}	
+	}
+	
+	/** Copy one TEXT file, with substitutions. */
 	private void processTextFile(File file) {
 		BufferedReader is = null;
 		PrintWriter pw = null;
@@ -186,9 +202,10 @@ public class MakeHandsOns {
 				}
 				for (Pattern p : pattMap.keySet()) {
 					line = p.matcher(line).replaceAll(pattMap.get(p));
+					log.fine(String.format("Patt %s, line->%s", p, line));
 				}
 				pw.println(line);
-				if (line != oldLine) {
+				if (!line.equals(oldLine)) {
 					fileChanged = true;
 				}
 			}
@@ -196,7 +213,7 @@ public class MakeHandsOns {
 			System.err.printf("I/O Error on %s: %s%n", file, e);
 		} finally {
 			if (fileChanged) {
-				System.out.println(file + " had change(s)"); // XXX run diff
+				log.info(file + " had change(s)"); // XXX run diff?
 			}
 			if (inCutMode) {
 				System.err.println("WARNING: " + file + " file ends in cut mode!");
