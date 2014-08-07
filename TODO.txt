@@ -1,4 +1,4 @@
-Make a junit test instead of inspecting the output manually.
+Make some junit tests.
 
 Run diff(1) on files that report changes.
 
