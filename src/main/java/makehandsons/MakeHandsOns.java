@@ -34,9 +34,11 @@ public class MakeHandsOns {
 	
 	/** The file extens that get replacements done */
 	final static String[] SUB_TEXT_FILE_EXTENS = {
-		".java",
-		".jsp",
+		".adoc",
 		".html",
+		".java",
+		".jsf",
+		".jsp",
 		".project",
 		".properties",
 		".txt",
@@ -56,36 +58,42 @@ public class MakeHandsOns {
 	//R // This should appear, and is a test for the "cut mode" process in processText()
 
 	/** directories to ignore */
-	final static String[] IGNORE_DIRS = { "CVS", ".metadata" };
+	final static String[] IGNORE_DIRS = { "CVS", ".svn", ".git", ".metadata" };
+
+	/** Map from a compiled regex Pattern to its replacement String */
+	static Map<Pattern,String> pattMap;
 
 	public static void main(String[] args) {
 		log.setLevel(Level.FINEST);
 		MakeHandsOns f = new MakeHandsOns();
-		f.loadPatterns();
+		pattMap = f.loadPatterns();
 		for (String arg : args) {
 			f.searchFiles(new File(arg));
 		}
 	}
 	
-	/** Map from a compiled regex Pattern to its replacement String */
-	Map<Pattern,String> pattMap = new HashMap<Pattern,String>();
 
 	/** Load (and compile) the Pattern file, a list
 	 * of x=y, where x is a regex pattern and y
 	 * is a replacement value.
 	 */
-	void loadPatterns() {
-		Properties p = new Properties();
+	Map<Pattern,String> loadPatterns() {
 		InputStream is = getClass().getResourceAsStream(PROPERTIES_FILENAME);
 		if (is == null) {
 			throw new RuntimeException("Could not load " + PROPERTIES_FILENAME + " from classpath.");
 		}
+		return loadPatterns(is);
+	}
+
+	Map<Pattern,String> loadPatterns(InputStream is) {
+		Properties p = new Properties();
 		try {
 			p.load(is);
 		} catch (IOException e) {
 			throw new RuntimeException("Error loading patterns", e);
 		}
 		
+		Map<Pattern,String> pattMap = new HashMap<Pattern,String>();
 		for (Object k : p.keySet()) {
 			String key = (String)k;
 			String repl = p.getProperty(key);
@@ -101,6 +109,7 @@ public class MakeHandsOns {
 			Pattern pat = Pattern.compile(key);
 			pattMap.put(pat, repl);
 		}
+		return pattMap;
 	}
 
 	/** Work through the starting directory, mapping it to destDir */
@@ -125,7 +134,7 @@ public class MakeHandsOns {
 		}
 	}
 
-	private boolean isTextFile(String fileName) {
+	boolean isTextFile(String fileName) {
 		for (String exten : SUB_TEXT_FILE_EXTENS) {
 			if (fileName.endsWith(exten))
 				return true;
