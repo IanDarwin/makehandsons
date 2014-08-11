@@ -71,14 +71,14 @@ re-generating the Jar file (see GENERATING below). You could probably
 just put the new properties file on your CLASSPATH ahead of the jar file, but this
 hasn't been tested.
 
-=== Generating the non_solution versions from the marked-up solutions
+=== Generating the Non_solution Versions from the Marked-up Solutions
 
 Each folder should be named foosolution, e.g., ex41solution. This will create ex41.
 
 Then run "java -jar makehandson.jar *solution" in the crsXXX
 directory. This will create ex11 from ex11solution, and so on.
 
-=== Rebuilding the prograM
+=== Rebuilding the Program
 
 The source file for makehandson is an Eclipse project. Open it in Eclipse
 and make any changes (this step is required as it will also compile the files!!).
