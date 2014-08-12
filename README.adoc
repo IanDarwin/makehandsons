@@ -85,6 +85,11 @@ and make any changes (this step is required as it will also compile the files!!)
 
 Or, using Maven 3, just do _mvn package_
 
+=== Bugs
+
+There ought to be a way to build several related projects from the same tree.
+This is left as a post-1.0-RELEASE proposal.
+
 === Modifying the Program
 
 Well, this is Github, so just fork it and hack away. If you make it better,
