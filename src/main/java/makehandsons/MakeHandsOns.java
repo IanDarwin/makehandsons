@@ -58,7 +58,9 @@ public class MakeHandsOns {
 	//R // This should appear, and is a test for the "cut mode" process in processText()
 
 	/** directories to ignore */
-	final static String[] IGNORE_DIRS = { "CVS", ".svn", ".git", ".metadata" };
+	final static String[] IGNORE_DIRS = { 
+		"CVS", ".svn", ".git", ".metadata" 
+	};
 
 	/** Map from a compiled regex Pattern to its replacement String */
 	static Map<Pattern,String> pattMap;
