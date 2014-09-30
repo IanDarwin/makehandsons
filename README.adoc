@@ -8,7 +8,7 @@ The benefits include the following:
 with the working solution.
 
 The starting assumption is that all the files for the course are organized
-into directories, one per assignment, rather like (say) and Eclipse workspace.
+into directories, one per assignment, rather like (say) an Eclipse workspace.
 In particular, the working versions should be stored in folders called "xxxsolution",
 e.g., "ex51solution" might be the solution version of Exercise 5.1.
 
@@ -25,9 +25,9 @@ The following line-based changes are baked into the code:
 Other changes are configurable (see below). The following are currently
 provided:
 
-1) Mark TODO lines with //T instead of TODO so the solution doesn't 
-show in Tasks Window in Eclipse. //T (with a space after!) gets turned 
-into // TODO
+1) In the Solutions input folder, mark TODO lines with //T instead of TODO 
+so the solution doesn't show in Tasks Window in Eclipse. 
+//T (with a space after!) gets turned into // TODO in the exercise version.
 
 2) //H  becomes // *HINT*
 
@@ -52,24 +52,24 @@ Look in /home/ian/testdata
 will come out as
 Look in C:/testdata
 
-Changes are made only to files whose extentions are listed in 
+Changes are made only to files whose extensions are listed in 
 SUB_TEXT_FILE_EXTENS in the program, which currently includes
 most sensible filename endings, but you might want to review it.
 
-Note that no changes will be made in directories named CVS or .metadata.
+Note that no changes will be made in directories named CVS or .git or .metadata.
 
 === Customizing
 
-The text substitions are loaded from a properties file to be easy to change, but
-if you do the documenation above will not strictly apply!
+The text substitutions are loaded from a properties file to be easy to change, but
+if you do the documentation above will not strictly apply!
 
-The input format is: regex=replacement.  If you are determined to change it,
+The input format is: regex=replacement.  If you do need to change it,
 consult the included properties file to see the examples.
 
 You can change this by editing makehandson.properties AND
 re-generating the Jar file (see GENERATING below). You could probably
-just put the new properties file on your CLASSPATH ahead of the jar file, but this
-hasn't been tested.
+just put the new properties file on your CLASSPATH ahead of the jar file, 
+but this hasn't been tested.
 
 === Generating the Non_solution Versions from the Marked-up Solutions
 

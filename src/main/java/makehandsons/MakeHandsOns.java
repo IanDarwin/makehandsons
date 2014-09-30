@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 /** The MakeHandsOns program looks through the given
  * directories recursively, copying each file
  * to the output directory. If the file is a text file (ends in
- * .java or .xml o ...), do substitution on each line with a given
+ * .java or .xml or ...), do substitution on each line with a given
  * set of replacement patterns (patterns and their
  * replacements are loaded from a Properties file).
  * @author Ian Darwin
