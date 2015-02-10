@@ -39,7 +39,7 @@ use the word 'solution' unless you mean it to go away in the non-solution.
 This sounds painful but is required so that the Eclipse .project/.classpath
 files will work
 
-5) Finally, we replace absolute paths. At present ${user.home} gets
+5) Finally, we replace absolute paths. At present the value of ${user.home} gets
 turned into C:/.  If you have used any absolute paths (which you 
 shouldn't), this could save your bacon
 e.g., a line containing /home/ian/testdata would be changed to C:/testdata
@@ -57,6 +57,19 @@ SUB_TEXT_FILE_EXTENS in the program, which currently includes
 most sensible filename endings, but you might want to review it.
 
 Note that no changes will be made in directories named CVS or .git or .metadata.
+
+Finally, a list of files can be excluded by their full name. For example, if in an
+exercise, the student is directed to create a file from scratch, that file should
+obviously exist in the solution folder but not in the generated student folder.
+The filename "ignore-files.txt" may exist in the root of a starting (solution)
+directory, containing one filename per line, as for example:
+
+----
+$ cat ex21solution/ignore-files.txt
+EventsListerTest.java
+----
+In this example, the file "EventListerTest.java' is the file the student must create,
+so neither it, nor the file ignore-files.txt, will be copied to the ex21 folder.
 
 === Customizing
 
