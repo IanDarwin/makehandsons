@@ -65,11 +65,11 @@ The filename "ignore-files.txt" may exist in the root of a starting (solution)
 directory, containing one filename per line, as for example:
 
 ----
-$ cat ex21solution/ignore-files.txt
+$ cat ex21solution/exclude-files.txt
 EventsListerTest.java
 ----
 In this example, the file "EventListerTest.java' is the file the student must create,
-so neither it, nor the file ignore-files.txt, will be copied to the ex21 folder.
+so neither it (nor, of course, the file ignore-files.txt) will be copied to the ex21 folder.
 
 === Customizing
 

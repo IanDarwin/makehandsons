@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  */
 public class MakeHandsOns {
 	
-	private static final String IGNORE_FILES_FILENAME = "ignore-files.txt";
+	private static final String EXCLUDE_FILES_FILENAME = "exclude-files.txt";
 
 	private static final String PROPERTIES_FILENAME = "/makehandsons.properties";
 
@@ -87,7 +87,7 @@ public class MakeHandsOns {
 	
 	void makeIgnoreList(File dir) throws IOException {
 		ignoreFiles = new ArrayList<>();
-		final File ignoreFilesFile = new File(dir, IGNORE_FILES_FILENAME);
+		final File ignoreFilesFile = new File(dir, EXCLUDE_FILES_FILENAME);
 		if (!ignoreFilesFile.exists()) {
 			return;
 		}
@@ -176,7 +176,7 @@ public class MakeHandsOns {
 		String name = file.getName();
 		if (name == null || name.length() == 0 ||
 			ignoreFiles.contains(name) ||
-			IGNORE_FILES_FILENAME.equals(name)) {
+			EXCLUDE_FILES_FILENAME.equals(name)) {
 			return;
 		}
 		String absPath = file.getAbsolutePath();
