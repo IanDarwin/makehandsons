@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -26,6 +28,8 @@ import java.util.regex.Pattern;
  */
 public class MakeHandsOns {
 	
+	private static final String IGNORE_FILES_FILENAME = "ignore-files.txt";
+
 	private static final String PROPERTIES_FILENAME = "/makehandsons.properties";
 
 	private static Logger log = Logger.getLogger("makehandsons");
@@ -65,12 +69,36 @@ public class MakeHandsOns {
 	/** Map from a compiled regex Pattern to its replacement String */
 	static Map<Pattern,String> pattMap;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		log.setLevel(Level.FINEST);
-		MakeHandsOns f = new MakeHandsOns();
-		pattMap = f.loadPatterns();
+		MakeHandsOns prog = new MakeHandsOns();
+		pattMap = prog.loadPatterns();
+		if (args.length == 0) {
+			System.err.printf("Usage: %s directory [...]%n", MakeHandsOns.class.getSimpleName());
+		}
 		for (String arg : args) {
-			f.searchFiles(new File(arg));
+			File fileArg = new File(arg);
+			prog.makeIgnoreList(fileArg);
+			prog.searchFiles(fileArg);
+		}
+	}
+	
+	List<String> ignoreFiles;
+	
+	void makeIgnoreList(File dir) throws IOException {
+		ignoreFiles = new ArrayList<>();
+		final File ignoreFilesFile = new File(dir, IGNORE_FILES_FILENAME);
+		if (!ignoreFilesFile.exists()) {
+			return;
+		}
+		try (BufferedReader is = new BufferedReader(new FileReader(ignoreFilesFile))) {
+			String line;
+			while ((line = is.readLine()) != null) {
+				if (line.length() == 0 || line.startsWith("#")) {
+					continue;
+				}
+				ignoreFiles.add(line);
+			}
 		}
 	}
 	
@@ -145,6 +173,12 @@ public class MakeHandsOns {
 	}
 	
 	private void processFile(File file) {
+		String name = file.getName();
+		if (name == null || name.length() == 0 ||
+			ignoreFiles.contains(name) ||
+			IGNORE_FILES_FILENAME.equals(name)) {
+			return;
+		}
 		String absPath = file.getAbsolutePath();
 		String newAbsPath = absPath.replace(REMOVE_FROM_PATH, "");
 		log.fine("NEW ABS PATH = " + newAbsPath);
