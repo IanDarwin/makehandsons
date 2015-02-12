@@ -63,7 +63,7 @@ public class MakeHandsOns {
 
 	/** directories to ignore */
 	final static String[] IGNORE_DIRS = { 
-		"CVS", ".svn", ".git", ".metadata" 
+		"CVS", ".svn", ".git", ".metadata", "bin", "target"
 	};
 
 	/** Map from a compiled regex Pattern to its replacement String */
@@ -79,7 +79,7 @@ public class MakeHandsOns {
 		for (String arg : args) {
 			File fileArg = new File(arg);
 			prog.makeIgnoreList(fileArg);
-			prog.searchFiles(fileArg);
+			prog.descendFileSystem(fileArg);
 		}
 	}
 	
@@ -143,7 +143,7 @@ public class MakeHandsOns {
 	}
 
 	/** Work through the starting directory, mapping it to destDir */
-	void searchFiles(File startDir) {
+	void descendFileSystem(File startDir) {
 		log.fine(String.format("FileSub.searchFiles(%s)%n", startDir));
 		if (startDir.isDirectory()) {
 			String name = startDir.getName();
@@ -155,7 +155,7 @@ public class MakeHandsOns {
 			}
 			File[] list = startDir.listFiles();
 			for (File f : list) {
-				searchFiles(f);
+				descendFileSystem(f);		// recurse
 			}
 		} else if (startDir.isFile()) {
 			processFile(startDir);
