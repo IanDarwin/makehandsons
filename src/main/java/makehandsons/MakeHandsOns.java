@@ -53,9 +53,12 @@ public class MakeHandsOns {
 	/** The part of the directory name that gets removed. */
 	final static String REMOVE_FROM_PATH = "solution";
 	
-	private final static Pattern CUTMODE_START = Pattern.compile("^\\s+//-");
-	private final static Pattern CUTMODE_END = Pattern.compile("^\\s+//\\+");
-	
+	private final static Pattern CUTMODE_START = Pattern.compile("^\\s*//-");
+	private final static Pattern CUTMODE_END = Pattern.compile("^\\s*//\\+");
+
+	private final static Pattern COMMENTMODE_START = Pattern.compile("^\\s*//C+");
+	private final static Pattern COMMENTMODE_END = Pattern.compile("^\\s*//C\\-");
+
 	//-
 	/* This should not appear in the output */
 	//+
@@ -101,7 +104,6 @@ public class MakeHandsOns {
 			}
 		}
 	}
-	
 
 	/** Load (and compile) the Pattern file, a list
 	 * of x=y, where x is a regex pattern and y
@@ -127,7 +129,8 @@ public class MakeHandsOns {
 		for (Object k : p.keySet()) {
 			String key = (String)k;
 			String repl = p.getProperty(key);
-			// If key begins with ${...}, substitute key now.
+			// If key begins with ${...}, substitute key now
+			// ("now" == at program start-up).
 			if (key.charAt(0) == '$') {
 				String propName = key.substring(2, key.length() - 1);
 				String newKey = sysProps.getProperty(propName);
@@ -229,7 +232,7 @@ public class MakeHandsOns {
 	private void processTextFile(File file) {
 		BufferedReader is = null;
 		PrintWriter pw = null;
-		boolean inCutMode = false;
+		boolean inCutMode = false, inCommentMode = false;
 		boolean fileChanged = false;
 		try {
 			pw = new PrintWriter(file.getAbsolutePath().replace(REMOVE_FROM_PATH, ""));
@@ -250,11 +253,23 @@ public class MakeHandsOns {
 					inCutMode = true;
 					continue;
 				}
+				if (inCommentMode) {
+					if (COMMENTMODE_START.matcher(line).matches()) {
+						System.err.println("WARNING: " + file + " has nested COMMENT_START codes");
+					}
+					if (COMMENTMODE_END.matcher(line).matches()) {
+						inCommentMode = false;
+					}
+				}
+				if (COMMENTMODE_START.matcher(line).matches()) {
+					inCutMode = fileChanged = true;
+					continue;
+				}
 				for (Pattern p : pattMap.keySet()) {
 					line = p.matcher(line).replaceAll(pattMap.get(p));
 					log.fine(String.format("Patt %s, line->%s", p, line));
 				}
-				pw.println(line);
+				pw.println(inCommentMode ? "//" + line : line);
 				if (!line.equals(oldLine)) {
 					fileChanged = true;
 				}
@@ -267,6 +282,9 @@ public class MakeHandsOns {
 			}
 			if (inCutMode) {
 				System.err.println("WARNING: " + file + " file ends in cut mode!");
+			}
+			if (inCommentMode) {
+				System.err.println("WARNING: " + file + " file ends in commenting-out mode!");
 			}
 			if (is != null) {
 				try {
