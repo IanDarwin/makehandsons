@@ -61,13 +61,14 @@ Note that no changes will be made in directories named CVS or .git or .metadata.
 Finally, a list of files can be excluded by their full name. For example, if in an
 exercise, the student is directed to create a file from scratch, that file should
 obviously exist in the solution folder but not in the generated student folder.
-The filename "ignore-files.txt" may exist in the root of a starting (solution)
+The filename "exclude-files.txt" may exist in the root of a starting (solution)
 directory, containing one filename per line, as for example:
 
 ----
 $ cat ex21solution/exclude-files.txt
 EventsListerTest.java
 ----
+
 In this example, the file "EventListerTest.java' is the file the student must create,
 so neither it (nor, of course, the file ignore-files.txt) will be copied to the ex21 folder.
 
@@ -80,7 +81,7 @@ The input format is: regex=replacement.  If you do need to change it,
 consult the included properties file to see the examples.
 
 You can change this by editing makehandson.properties AND
-re-generating the Jar file (see GENERATING below). You could probably
+re-generating the Jar file (see "Rebuilding" below). You could probably
 just put the new properties file on your CLASSPATH ahead of the jar file, 
 but this hasn't been tested.
 
@@ -94,14 +95,16 @@ directory. This will create ex11 from ex11solution, and so on.
 === Rebuilding the Program
 
 The source file for makehandson is an Eclipse project. Open it in Eclipse
-and make any changes (this step is required as it will also compile the files!!).
+and make any changes.
 
 Or, using Maven 3, just do _mvn package_
 
-=== Bugs
+=== Bugs/ToDos
 
 There ought to be a way to build several related projects from the same tree.
 This is left as a post-1.0-RELEASE proposal.
+
+Generate HTML hints by diff-ing the changed files.
 
 === Modifying the Program
 
