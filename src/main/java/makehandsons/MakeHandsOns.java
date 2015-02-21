@@ -32,8 +32,6 @@ public class MakeHandsOns {
 
 	private static final String PROPERTIES_FILENAME = "/makehandsons.properties";
 
-	private static Logger log = Logger.getLogger("makehandsons");
-	
 	Properties sysProps = System.getProperties();
 	
 	/** The file extens that get replacements done */
@@ -71,9 +69,13 @@ public class MakeHandsOns {
 
 	/** Map from a compiled regex Pattern to its replacement String */
 	static Map<Pattern,String> pattMap;
+	
+	/** JUL logger */
+	private static Logger log;
 
 	public static void main(String[] args) throws Exception {
-		log.setLevel(Level.FINEST);
+		log = Logger.getLogger("makehandsons");
+		log.setLevel(Level.WARNING);
 		MakeHandsOns prog = new MakeHandsOns();
 		pattMap = prog.loadPatterns();
 		if (args.length == 0) {
@@ -101,6 +103,23 @@ public class MakeHandsOns {
 					continue;
 				}
 				ignoreFiles.add(line);
+			}
+		}
+	}
+
+	private void checkIgnoredFileForMarkup(File file) throws IOException {
+		if (!file.exists()) {
+			log.warning(String.format("Excluded file %s doesn't exist", file));
+			return;
+		}
+		try (BufferedReader is = new BufferedReader(new FileReader(file))) {
+			String line = null;
+			while ((line = is.readLine()) != null) {
+				if (line.contains("//-") ||
+					line.contains("//+")) {
+					log.warning("Excluded file " + file + " appears to contain markup");
+					return;	// Only natter once per file
+				}
 			}
 		}
 	}
@@ -145,8 +164,9 @@ public class MakeHandsOns {
 		return pattMap;
 	}
 
-	/** Work through the starting directory, mapping it to destDir */
-	void descendFileSystem(File startDir) {
+	/** Work through the starting directory, mapping it to destDir 
+	 * @throws IOException */
+	void descendFileSystem(File startDir) throws IOException {
 		log.fine(String.format("FileSub.searchFiles(%s)%n", startDir));
 		if (startDir.isDirectory()) {
 			String name = startDir.getName();
@@ -175,11 +195,12 @@ public class MakeHandsOns {
 		return false;
 	}
 	
-	private void processFile(File file) {
+	private void processFile(File file) throws IOException {
 		String name = file.getName();
 		if (name == null || name.length() == 0 ||
 			ignoreFiles.contains(name) ||
 			EXCLUDE_FILES_FILENAME.equals(name)) {
+			checkIgnoredFileForMarkup(file);
 			return;
 		}
 		String absPath = file.getAbsolutePath();

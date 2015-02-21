@@ -2,9 +2,9 @@
 
 # Make the Hands-Ons from the Solutions, which are known to work.
 
-set -x
+# set -x
 
-JAR=${HOME}/.m2/repository//com/darwinsys/makehandsons/1.0-SNAPSHOT/makehandsons-1.0-SNAPSHOT.jar
+JAR=${HOME}/.m2/repository/com/darwinsys/makehandsons/1.0-SNAPSHOT/makehandsons-1.0-SNAPSHOT.jar
 
 if [ ! -f ${JAR} ]; then
 	echo "Jar not found, install ${JAR} using 'mvn install' in makehandson source" >&2
