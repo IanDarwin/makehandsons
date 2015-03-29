@@ -101,6 +101,8 @@ Or, using Maven 3, just do _mvn package_
 
 === Bugs/ToDos
 
+Warn or remove-by-default each top-level project directory.
+
 Generate HTML hints by diff-ing the changed files.
 
 There ought to be a way to build several related projects from the same tree.
