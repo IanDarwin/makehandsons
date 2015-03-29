@@ -61,7 +61,7 @@ Note that no changes will be made in directories named CVS or .git or .metadata.
 Finally, a list of files can be excluded by their full name. For example, if in an
 exercise, the student is directed to create a file from scratch, that file should
 obviously exist in the solution folder but not in the generated student folder.
-The filename "exclude-files.txt" may exist in the root of a starting (solution)
+The filename "exclude-files.txt" may exist only in the root of a starting (solution)
 directory, containing one filename per line, as for example:
 
 ----
@@ -101,10 +101,11 @@ Or, using Maven 3, just do _mvn package_
 
 === Bugs/ToDos
 
-There ought to be a way to build several related projects from the same tree.
-This is left as a post-1.0-RELEASE proposal.
-
 Generate HTML hints by diff-ing the changed files.
+
+There ought to be a way to build several related projects from the same tree.
+For example, a main solution and a bonus solution.
+This is left as a post-1.0-RELEASE proposal.
 
 === Modifying the Program
 
