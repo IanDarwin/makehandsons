@@ -36,7 +36,7 @@ public class TestProcessing {
 	}
 	
 	@Test
-	public void testCutMode() {
+	public void testCutModeJava() {
 		List<String> input = Arrays.asList(
 			"//-",
 			"/* This should not appear in the output */",
@@ -48,6 +48,22 @@ public class TestProcessing {
 		assertChanged(modes);
 		assertFinished(modes);
 		assertFalse(output.toString().contains("should not appear"));
+	}
+	
+	@Test
+	public void testCutModeXhtml() {
+		List<String> input = Arrays.asList(
+			"<!-- //- -->",
+			"This should not appear in the output",
+			"<!-- //+ -->",
+			"int i = 0;" // This is the online line that should appear
+			);
+		List<String> output = target.processTextFileLines(input, inputFile, modes);
+		assertEquals(1, output.size());
+		assertChanged(modes);
+		assertFinished(modes);
+		assertFalse(output.toString().contains("should not appear"));
+		assertEquals(input.get(3), output.get(0));
 	}
 	
 	@Test

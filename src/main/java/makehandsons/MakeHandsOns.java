@@ -326,29 +326,29 @@ public class MakeHandsOns {
 		for (String line : lines) {
 			String oldLine = line;
 			if (modes.inCutMode) {
-				if (CUTMODE_START.matcher(line).matches()) {
+				if (CUTMODE_START.matcher(line).find()) {
 					System.err.println("WARNING: " + inputFile + " has nested CUT_START codes");
 				}
-				if (CUTMODE_END.matcher(line).matches()) {
+				if (CUTMODE_END.matcher(line).find()) {
 					modes.inCutMode = false;
 				}
 				modes.fileChanged = true; // we cut this line
 				continue;
 			}
-			if (CUTMODE_START.matcher(line).matches()) {
+			if (CUTMODE_START.matcher(line).find()) {
 				modes.inCutMode = true;
 				continue;
 			}
 			if (modes.inCommentMode) {
-				if (COMMENTMODE_START.matcher(line).matches()) {
+				if (COMMENTMODE_START.matcher(line).find()) {
 					System.err.println("WARNING: " + inputFile + " has nested COMMENT_START codes");
 				}
-				if (COMMENTMODE_END.matcher(line).matches()) {
+				if (COMMENTMODE_END.matcher(line).find()) {
 					modes.inCommentMode = false;
 					continue;
 				}
 			}
-			if (COMMENTMODE_START.matcher(line).matches()) {
+			if (COMMENTMODE_START.matcher(line).find()) {
 				modes.inCommentMode = modes.fileChanged = true;
 				continue;
 			}
