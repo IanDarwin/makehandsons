@@ -51,8 +51,8 @@ public class MakeHandsOns {
 	/** The part of the directory name that gets removed. */
 	final static String REMOVE_FROM_PATH = "solution";
 	
-	private final static Pattern CUTMODE_START = Pattern.compile("^\\s*//-");
-	private final static Pattern CUTMODE_END = Pattern.compile("^\\s*//\\+");
+	private final static Pattern CUTMODE_START = Pattern.compile("\\s*//-");
+	private final static Pattern CUTMODE_END = Pattern.compile("\\s*//\\+");
 
 	private final static Pattern COMMENTMODE_START = Pattern.compile("^\\s*//C+");
 	private final static Pattern COMMENTMODE_END = Pattern.compile("^\\s*//C\\-");
@@ -74,10 +74,7 @@ public class MakeHandsOns {
 	private static Logger log;
 
 	public static void main(String[] args) throws Exception {
-		log = Logger.getLogger("makehandsons");
-		log.setLevel(Level.WARNING);
 		MakeHandsOns prog = new MakeHandsOns();
-		pattMap = prog.loadPatterns();
 		if (args.length == 0) {
 			System.err.printf("Usage: %s directory [...]%n", MakeHandsOns.class.getSimpleName());
 		}
@@ -85,6 +82,19 @@ public class MakeHandsOns {
 			File fileArg = new File(arg);
 			prog.makeIgnoreList(fileArg);
 			prog.descendFileSystem(fileArg);
+		}
+	}
+	
+	MakeHandsOns() {
+		log = Logger.getLogger("makehandsons");
+		log.setLevel(Level.WARNING);
+		try (InputStream is = getClass().getResourceAsStream(PROPERTIES_FILENAME)) {
+			if (is == null) {
+				throw new RuntimeException("Could not load " + PROPERTIES_FILENAME + " from classpath.");
+			}
+			pattMap = loadPatterns(is);
+		} catch (IOException ex) {
+			throw new ExceptionInInitializerError("CANTHAPPEN, did");
 		}
 	}
 	
@@ -123,20 +133,12 @@ public class MakeHandsOns {
 			}
 		}
 	}
-
+	
 	/** Load (and compile) the Pattern file, a list
 	 * of x=y, where x is a regex pattern and y
 	 * is a replacement value.
 	 */
-	Map<Pattern,String> loadPatterns() {
-		InputStream is = getClass().getResourceAsStream(PROPERTIES_FILENAME);
-		if (is == null) {
-			throw new RuntimeException("Could not load " + PROPERTIES_FILENAME + " from classpath.");
-		}
-		return loadPatterns(is);
-	}
-
-	Map<Pattern,String> loadPatterns(InputStream is) {
+	private Map<Pattern,String> loadPatterns(InputStream is) {
 		Properties p = new Properties();
 		try {
 			p.load(is);
@@ -148,6 +150,7 @@ public class MakeHandsOns {
 		for (Object k : p.keySet()) {
 			String key = (String)k;
 			String repl = p.getProperty(key);
+			System.out.println("load: " + key + "->" + repl);
 			// If key begins with ${...}, substitute key now
 			// ("now" == at program start-up).
 			if (key.charAt(0) == '$') {
@@ -165,7 +168,8 @@ public class MakeHandsOns {
 	}
 
 	/** Work through the starting directory, mapping it to destDir 
-	 * @throws IOException */
+	 * @throws IOException When Java IO does
+	 */
 	void descendFileSystem(File startDir) throws IOException {
 		log.fine(String.format("FileSub.searchFiles(%s)%n", startDir));
 		if (startDir.isDirectory()) {
@@ -253,58 +257,29 @@ public class MakeHandsOns {
 	private void processTextFile(File file) {
 		BufferedReader is = null;
 		PrintWriter pw = null;
-		boolean inCutMode = false, inCommentMode = false;
-		boolean fileChanged = false;
+		TextModes modes = new TextModes();
 		try {
 			pw = new PrintWriter(file.getAbsolutePath().replace(REMOVE_FROM_PATH, ""));
 			is = new BufferedReader(new FileReader(file));
-			String line;
-			while ((line = is.readLine()) != null) {
-				String oldLine = line;
-				if (inCutMode) {
-					if (CUTMODE_START.matcher(line).matches()) {
-						System.err.println("WARNING: " + file + " has nested CUT_START codes");
-					}
-					if (CUTMODE_END.matcher(line).matches()) {
-						inCutMode = false;
-					}
-					continue;
-				}
-				if (CUTMODE_START.matcher(line).matches()) {
-					inCutMode = true;
-					continue;
-				}
-				if (inCommentMode) {
-					if (COMMENTMODE_START.matcher(line).matches()) {
-						System.err.println("WARNING: " + file + " has nested COMMENT_START codes");
-					}
-					if (COMMENTMODE_END.matcher(line).matches()) {
-						inCommentMode = false;
-					}
-				}
-				if (COMMENTMODE_START.matcher(line).matches()) {
-					inCutMode = fileChanged = true;
-					continue;
-				}
-				for (Pattern p : pattMap.keySet()) {
-					line = p.matcher(line).replaceAll(pattMap.get(p));
-					log.fine(String.format("Patt %s, line->%s", p, line));
-				}
-				pw.println(inCommentMode ? "//" + line : line);
-				if (!line.equals(oldLine)) {
-					fileChanged = true;
-				}
+			String aline;
+			List<String> lines = new ArrayList<>();
+			while ((aline = is.readLine()) != null) {
+				lines.add(aline);
+			}
+			List<String> outLines = processTextFileLines(lines, file, modes);
+			for (String modLine : outLines) {
+				pw.println(modLine);
 			}
 		} catch (IOException e) {
 			System.err.printf("I/O Error on %s: %s%n", file, e);
 		} finally {
-			if (fileChanged) {
+			if (modes.fileChanged) {
 				log.info(file + " had change(s)"); // XXX run diff?
 			}
-			if (inCutMode) {
+			if (modes.inCutMode) {
 				System.err.println("WARNING: " + file + " file ends in cut mode!");
 			}
-			if (inCommentMode) {
+			if (modes.inCommentMode) {
 				System.err.println("WARNING: " + file + " file ends in commenting-out mode!");
 			}
 			if (is != null) {
@@ -318,5 +293,54 @@ public class MakeHandsOns {
 				pw.close();
 			}
 		}
+	}
+
+	/**
+	 * Do the actual work of massaging a text file's contents;
+	 * extracted from processTextFile to make testing easier
+	 * @param lines The List of lines in the file
+	 * @param inputFile The input File, only for printing errors
+	 * @param modes The state flags wrapper
+	 */
+	public List<String> processTextFileLines(List<String> lines, File inputFile,
+			TextModes modes) {
+		List<String> output = new ArrayList<>();
+		for (String line : lines) {
+			String oldLine = line;
+			if (modes.inCutMode) {
+				if (CUTMODE_START.matcher(line).matches()) {
+					System.err.println("WARNING: " + inputFile + " has nested CUT_START codes");
+				}
+				if (CUTMODE_END.matcher(line).matches()) {
+					modes.inCutMode = false;
+				}
+				continue;
+			}
+			if (CUTMODE_START.matcher(line).matches()) {
+				modes.inCutMode = true;
+				continue;
+			}
+			if (modes.inCommentMode) {
+				if (COMMENTMODE_START.matcher(line).matches()) {
+					System.err.println("WARNING: " + inputFile + " has nested COMMENT_START codes");
+				}
+				if (COMMENTMODE_END.matcher(line).matches()) {
+					modes.inCommentMode = false;
+				}
+			}
+			if (COMMENTMODE_START.matcher(line).matches()) {
+				modes.inCutMode = modes.fileChanged = true;
+				continue;
+			}
+			for (Pattern p : pattMap.keySet()) {
+				line = p.matcher(line).replaceAll(pattMap.get(p));
+				log.fine(String.format("Patt %s, line->%s", p, line));
+			}
+			output.add(modes.inCommentMode ? "//" + line : line);
+			if (!line.equals(oldLine)) {
+				modes.fileChanged = true;
+			}
+		}
+		return output;
 	}
 }
