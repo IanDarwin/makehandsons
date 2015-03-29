@@ -12,15 +12,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TestSomeUtilities {
-	TextModes modes;
-	MakeHandsOns target;
+	private MakeHandsOns target;
 	
-	final static File inputFile = new File("test file");
-
 	@Before
 	public void mehtUp() {
 		target = new MakeHandsOns();
-		modes = new TextModes();
 	}
 
 	@Test
@@ -29,28 +25,5 @@ public class TestSomeUtilities {
 		assertTrue(target.isTextFile("foo/abc.txt"));
 		assertTrue(target.isTextFile("foo/Readme.adoc"));
 		assertFalse(target.isTextFile("Llewelynn.class"));
-	}
-	
-	@Test
-	public void testProcessTextFileLinesIdemPotent() {
-		List<String> input = Arrays.asList("One","Two");
-		
-		List<String> output = target.processTextFileLines(input, inputFile, modes);
-		for (int i = 0; i < output.size(); i++) {
-			assertEquals(input.get(i), output.get(i));
-		}
-	}
-	
-	@Test
-	public void testCutMode() {
-		List<String> input = Arrays.asList(
-			"//-",
-			"/* This should not appear in the output */",
-			"//+",
-			"int i = 0;" // This is the online line that should appear
-			);
-		List<String> output = target.processTextFileLines(input, inputFile, modes);
-		assertEquals(1, output.size());
-		assertFalse(output.toString().contains("should not appear"));
 	}
 }
