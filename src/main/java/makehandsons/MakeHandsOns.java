@@ -54,7 +54,7 @@ public class MakeHandsOns {
 	private final static Pattern CUTMODE_START = Pattern.compile("\\s*//-");
 	private final static Pattern CUTMODE_END = Pattern.compile("\\s*//\\+");
 
-	private final static Pattern COMMENTMODE_START = Pattern.compile("^\\s*//C+");
+	private final static Pattern COMMENTMODE_START = Pattern.compile("^\\s*//C\\+");
 	private final static Pattern COMMENTMODE_END = Pattern.compile("^\\s*//C\\-");
 
 	//-
@@ -77,7 +77,9 @@ public class MakeHandsOns {
 		MakeHandsOns prog = new MakeHandsOns();
 		if (args.length == 0) {
 			System.err.printf("Usage: %s directory [...]%n", MakeHandsOns.class.getSimpleName());
-		}
+		} else if (args[0].equals("-h")) {
+			doHelp();
+		} else
 		for (String arg : args) {
 			File fileArg = new File(arg);
 			prog.makeIgnoreList(fileArg);
@@ -85,6 +87,22 @@ public class MakeHandsOns {
 		}
 	}
 	
+	static final String[] HELP_TEXT = {
+		"This program generates the exercises from the solutions",
+		"//T -> // TODO ",
+		"//H -> // *HINT*",
+		"//- -> enter cut mode",
+		"//+ -> leave cut mode",
+		"//C+ -> enter comments mode",
+		"//C- -> leave comments mode"
+	};
+	
+	private static void doHelp() {
+		for (String h : HELP_TEXT) {
+			System.out.println(h);
+		}
+	}
+
 	MakeHandsOns() {
 		log = Logger.getLogger("makehandsons");
 		log.setLevel(Level.WARNING);
@@ -314,6 +332,7 @@ public class MakeHandsOns {
 				if (CUTMODE_END.matcher(line).matches()) {
 					modes.inCutMode = false;
 				}
+				modes.fileChanged = true; // we cut this line
 				continue;
 			}
 			if (CUTMODE_START.matcher(line).matches()) {
@@ -326,10 +345,11 @@ public class MakeHandsOns {
 				}
 				if (COMMENTMODE_END.matcher(line).matches()) {
 					modes.inCommentMode = false;
+					continue;
 				}
 			}
 			if (COMMENTMODE_START.matcher(line).matches()) {
-				modes.inCutMode = modes.fileChanged = true;
+				modes.inCommentMode = modes.fileChanged = true;
 				continue;
 			}
 			for (Pattern p : pattMap.keySet()) {

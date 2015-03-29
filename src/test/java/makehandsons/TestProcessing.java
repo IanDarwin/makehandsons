@@ -31,6 +31,8 @@ public class TestProcessing {
 		for (int i = 0; i < output.size(); i++) {
 			assertEquals(input.get(i), output.get(i));
 		}
+		assertNotChanged(modes);
+		assertFinished(modes);
 	}
 	
 	@Test
@@ -43,6 +45,35 @@ public class TestProcessing {
 			);
 		List<String> output = target.processTextFileLines(input, inputFile, modes);
 		assertEquals(1, output.size());
+		assertChanged(modes);
+		assertFinished(modes);
 		assertFalse(output.toString().contains("should not appear"));
+	}
+	
+	@Test
+	public void testCommentMode() {
+		List<String> input = Arrays.asList(
+			"//C+",
+			"int i = 0;",
+			"//C-"
+			);
+		List<String> output = target.processTextFileLines(input, inputFile, modes);
+		assertEquals(1, output.size());
+		assertEquals("//"+input.get(1), output.get(0));
+		assertChanged(modes);
+		assertFinished(modes);
+		assertFalse(output.toString().contains("should not appear"));
+	}
+	
+	private void assertFinished(TextModes modes) {
+		assertFalse(modes.inCutMode);
+		assertFalse(modes.inCommentMode);
+	}
+	
+	private void assertChanged(TextModes modes) {
+		assertTrue(modes.fileChanged);
+	}
+	private void assertNotChanged(TextModes modes) {
+		assertFalse(modes.fileChanged);
 	}
 }
