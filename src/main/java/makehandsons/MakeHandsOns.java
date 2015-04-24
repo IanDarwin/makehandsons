@@ -104,8 +104,9 @@ public class MakeHandsOns {
 	}
 
 	MakeHandsOns() {
+		// Change logging level in logging.properties, not here.
 		log = Logger.getLogger("makehandsons");
-		log.setLevel(Level.WARNING);
+
 		try (InputStream is = getClass().getResourceAsStream(PROPERTIES_FILENAME)) {
 			if (is == null) {
 				throw new RuntimeException("Could not load " + PROPERTIES_FILENAME + " from classpath.");
@@ -116,10 +117,10 @@ public class MakeHandsOns {
 		}
 	}
 	
-	List<String> ignoreFiles;
+	List<String> excludeFiles;
 	
 	void makeIgnoreList(File dir) throws IOException {
-		ignoreFiles = new ArrayList<>();
+		excludeFiles = new ArrayList<>();
 		final File ignoreFilesFile = new File(dir, EXCLUDE_FILES_FILENAME);
 		if (!ignoreFilesFile.exists()) {
 			return;
@@ -130,7 +131,7 @@ public class MakeHandsOns {
 				if (line.length() == 0 || line.startsWith("#")) {
 					continue;
 				}
-				ignoreFiles.add(line);
+				excludeFiles.add(line);
 			}
 		}
 	}
@@ -205,7 +206,7 @@ public class MakeHandsOns {
 		} else if (startDir.isFile()) {
 			processFile(startDir);
 		} else {
-			System.err.printf("Warning: %s neither file nor directory, ignoring", startDir);
+			System.err.printf("Warning: %s neither file nor directory, ignoring%n", startDir);
 		}
 	}
 
@@ -219,16 +220,26 @@ public class MakeHandsOns {
 	
 	private void processFile(File file) throws IOException {
 		String name = file.getName();
-		if (name == null || name.length() == 0 ||
-			ignoreFiles.contains(name) ||
-			EXCLUDE_FILES_FILENAME.equals(name)) {
-			checkIgnoredFileForMarkup(file);
-			return;
-		}
 		String absPath = file.getAbsolutePath();
 		String newAbsPath = absPath.replace(REMOVE_FROM_PATH, "");
-		log.fine("NEW ABS PATH = " + newAbsPath);
 		File newFile = new File(newAbsPath);
+		log.fine("NEW ABS PATH = " + newAbsPath);
+		if (name == null || name.length() == 0 ||
+			EXCLUDE_FILES_FILENAME.equals(name)) {
+			return;
+		}
+		if (excludeFiles.contains(name)) {
+			checkIgnoredFileForMarkup(file);
+			if (newFile.exists()) {
+				log.severe("Exuded file exists: " + newAbsPath + "; nuking it!");
+				newFile.delete();
+				if (newFile./*still*/exists()) {
+					// Fail early and often.
+					throw new IllegalArgumentException("Sob! Tried to delete " + newAbsPath + " but failed!");
+				}
+			}
+			return;
+		}
 		newFile.getParentFile().mkdirs();
 		log.info(String.format("FileSub.processFile(%s->%s)%n", file, newAbsPath));		
 		if (isTextFile(file.getName())) {
