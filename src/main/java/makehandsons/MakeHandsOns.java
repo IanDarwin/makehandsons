@@ -241,7 +241,7 @@ public class MakeHandsOns {
 			return;
 		}
 		newFile.getParentFile().mkdirs();
-		log.info(String.format("FileSub.processFile(%s->%s)%n", file, newAbsPath));		
+		log.fine(String.format("FileSub.processFile(%s->%s)%n", file, newAbsPath));		
 		if (isTextFile(file.getName())) {
 			processTextFile(file);
 		} else {						// copy as binary
