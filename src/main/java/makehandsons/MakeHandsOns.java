@@ -81,7 +81,7 @@ public class MakeHandsOns {
 			doHelp();
 		} else
 		for (String arg : args) {
-			if (".".equals(args)) {
+			if (".".equals(arg)) {
 				System.err.println(
 					"Sorry, you can't use '.', use '*solution' or individual solution directory.");
 				System.exit(42);
