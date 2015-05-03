@@ -81,6 +81,11 @@ public class MakeHandsOns {
 			doHelp();
 		} else
 		for (String arg : args) {
+			if (".".equals(args)) {
+				System.err.println(
+					"Sorry, you can't use '.', use '*solution' or individual solution directory.");
+				System.exit(42);
+			}
 			File fileArg = new File(arg);
 			prog.makeIgnoreList(fileArg);
 			prog.descendFileSystem(fileArg);
@@ -117,10 +122,10 @@ public class MakeHandsOns {
 		}
 	}
 	
-	List<String> excludeFiles;
+	List<String> excludeFiles = new ArrayList<>();
 	
 	void makeIgnoreList(File dir) throws IOException {
-		excludeFiles = new ArrayList<>();
+		excludeFiles.clear();
 		final File ignoreFilesFile = new File(dir, EXCLUDE_FILES_FILENAME);
 		if (!ignoreFilesFile.exists()) {
 			return;
