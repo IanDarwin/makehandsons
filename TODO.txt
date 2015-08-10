@@ -1,4 +1,8 @@
-Make some junit tests.
+Add another mode (sorry!): //S- and //S+ for stuff that students should remove in the exercise
+and thus should be omitted from the solution (S-). ALAS, this would require rewriting the 
+Solution files as well as the student starting version files, which is just too dangerous!
+
+Make more junit tests.
 
 Run diff(1) on files that report changes.
 
