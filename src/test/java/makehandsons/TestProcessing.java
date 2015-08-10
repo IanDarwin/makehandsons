@@ -14,7 +14,7 @@ import org.junit.Test;
 public class TestProcessing {
 	TextModes modes;
 	MakeHandsOns target;
-	
+
 	final static File inputFile = new File("test file");
 
 	@Before
@@ -34,7 +34,7 @@ public class TestProcessing {
 		assertNotChanged(modes);
 		assertFinished(modes);
 	}
-	
+
 	@Test
 	public void testCutModeJava() {
 		List<String> input = Arrays.asList(
@@ -49,7 +49,7 @@ public class TestProcessing {
 		assertFinished(modes);
 		assertFalse(output.toString().contains("should not appear"));
 	}
-	
+
 	@Test
 	public void testCutModeXhtml() {
 		List<String> input = Arrays.asList(
@@ -65,7 +65,7 @@ public class TestProcessing {
 		assertFalse(output.toString().contains("should not appear"));
 		assertEquals(input.get(3), output.get(0));
 	}
-	
+
 	@Test
 	public void testCommentMode() {
 		List<String> input = Arrays.asList(
@@ -80,12 +80,12 @@ public class TestProcessing {
 		assertFinished(modes);
 		assertFalse(output.toString().contains("should not appear"));
 	}
-	
+
 	private void assertFinished(TextModes modes) {
 		assertFalse(modes.inCutMode);
 		assertFalse(modes.inCommentMode);
 	}
-	
+
 	private void assertChanged(TextModes modes) {
 		assertTrue(modes.fileChanged);
 	}

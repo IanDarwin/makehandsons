@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class TestSomeUtilities {
 	private MakeHandsOns target;
-	
+
 	@Before
 	public void mehtUp() {
 		target = new MakeHandsOns();
