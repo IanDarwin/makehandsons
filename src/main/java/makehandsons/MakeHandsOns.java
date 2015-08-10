@@ -236,7 +236,7 @@ public class MakeHandsOns {
 		if (excludeFiles.contains(name)) {
 			checkIgnoredFileForMarkup(file);
 			if (newFile.exists()) {
-				log.severe("Exuded file exists: " + newAbsPath + "; nuking it!");
+				log.severe("Excluded file exists: " + newAbsPath + "; nuking it!");
 				newFile.delete();
 				if (newFile./*still*/exists()) {
 					// Fail early and often.
