@@ -1,9 +1,9 @@
 Add another mode (sorry!): //S- and //S+ for stuff that students should remove in the exercise
 and thus should be omitted from the solution (S-). ALAS, this would require rewriting the 
 Solution files as well as the student starting version files, which is just too dangerous!
+This would require us to go to the next level: Build both fooSolution and foo from fooMaster
 
 Make more junit tests.
 
 Run diff(1) on files that report changes.
 
-Maybe: Build both fooSolution and foo from e.g., fooMaster
