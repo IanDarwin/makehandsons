@@ -1,0 +1,2 @@
+# Bash scripts need unix endings even on Windoze
+scripts/*    text merge=union eol=lf
