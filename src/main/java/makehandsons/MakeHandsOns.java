@@ -174,7 +174,7 @@ public class MakeHandsOns {
 		for (Object k : p.keySet()) {
 			String key = (String)k;
 			String repl = p.getProperty(key);
-			System.out.println("load: " + key + "->" + repl);
+			log.finer("load: " + key + "->" + repl);
 			// If key begins with ${...}, substitute key now
 			// ("now" == at program start-up).
 			if (key.charAt(0) == '$') {
