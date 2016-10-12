@@ -32,7 +32,16 @@ so the solution doesn't show in Tasks Window in Eclipse.
 2) //H  becomes // *HINT*
 
 3) Use //R for replacement variables, that is, placeholders for stuff that gets cut
-//R
+For example (from the unit tests):
+----
+"//R This should appear.",
+"//-",
+"int i = 0; // this should not appear",
+"//+"
+----
+will print one line:
+----
+ This should appear.
 
 4) Remove "solution" from filenames in config files (so be warned: don't
 use the word 'solution' unless you mean it to go away in the non-solution.
