@@ -42,6 +42,7 @@ For example (from the unit tests):
 will print one line:
 ----
  This should appear.
+----
 
 4) Remove "solution" from filenames in config files (so be warned: don't
 use the word 'solution' unless you mean it to go away in the non-solution.
