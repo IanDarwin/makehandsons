@@ -102,6 +102,8 @@ Each folder should be named foosolution, e.g., ex41solution. This will create ex
 Then run "java -jar makehandson.jar *solution" in the crsXXX
 directory. This will create ex11 from ex11solution, and so on.
 
+There is a script in the scripts folder that may work for you if you do "mvn install".
+
 === Rebuilding the Program
 
 The source file for makehandson is an Eclipse project. Open it in Eclipse
@@ -111,13 +113,7 @@ Or, using Maven 3, just do _mvn package_
 
 === Bugs/ToDos
 
-Warn or remove-by-default each top-level project directory.
-
-Generate HTML hints by diff-ing the changed files.
-
-There ought to be a way to build several related projects from the same tree.
-For example, a main solution and a bonus solution.
-This is left as a post-1.0-RELEASE proposal.
+See the file TODO.txt
 
 === Modifying the Program
 
