@@ -31,7 +31,7 @@ so the solution doesn't show in Tasks Window in Eclipse (since you should only b
 
 2) //H  becomes // *HINT*
 
-3) Use //R for replacement variables, that is, placeholders for stuff that gets cut
+3) Use //R for replacement variables, that is, placeholders for stuff that gets cut.
 For example (from the unit tests):
 ----
 "//R This should appear.",
