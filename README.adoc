@@ -26,7 +26,7 @@ Other changes are configurable (see below). The following are currently
 provided:
 
 1) In the Solutions input folder, mark TODO lines with //T instead of TODO 
-so the solution doesn't show in Tasks Window in Eclipse. 
+so the solution doesn't show in Tasks Window in Eclipse (since you should only be editing the solutions versions).
 //T (with a space after!) gets turned into // TODO in the exercise version.
 
 2) //H  becomes // *HINT*
@@ -54,7 +54,7 @@ shouldn't), this could save your bacon
 e.g., a line containing /home/ian/testdata would be changed to C:/testdata
 
 Actually this is implemented as processing system properties as a key, 
-e.g., because the default Properties file says
+e.g., because the default JDK System Properties list on MS-Windows says
 ${user.home}=C:/
 then a line like
 Look in /home/ian/testdata
