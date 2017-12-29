@@ -25,27 +25,30 @@ The following line-based changes are baked into the code:
 Other changes are configurable (see below). The following are currently
 provided:
 
-1) In the Solutions input folder, mark TODO lines with //T instead of TODO 
+1) In the Solutions input folder, you need to mark TODO lines with //T instead of // TODO 
 so the solution doesn't show in Tasks Window in Eclipse (since you should only be editing the solutions versions).
 //T (with a space after!) gets turned into // TODO in the exercise version.
 
 2) //H  becomes // *HINT*
 
 3) Use //R for replacement variables, that is, placeholders for stuff that gets cut.
-For example (from the unit tests):
+This can be useful to make the exercise code compile without errors.
+For example:
 ----
-"//R This should appear.",
+"//T Create an int variable i containing the expression shown in the notes.
+"//R int i = 0;
 "//-",
-"int i = 0; // this should not appear",
+"int i = Math.sqrt(jNumber) * Math.cos(kNumber);
 "//+"
 ----
-will print one line:
+will print one line (in addition to the TODO comment):
 ----
  This should appear.
 ----
 
-4) Remove "solution" from filenames in config files (so be warned: don't
+4) We remove "solution" from filenames in config files (so be warned: don't
 use the word 'solution' unless you mean it to go away in the non-solution.
+It is case sensitive so you can refer to "the Solution" and have it work OK.
 This sounds painful but is required so that the Eclipse .project/.classpath
 files will work
 
@@ -54,24 +57,30 @@ turned into C:/.  If you have used any absolute paths (which you
 shouldn't), this could save your bacon
 e.g., a line containing /home/ian/testdata would be changed to C:/testdata
 
-Actually this is implemented as processing system properties as a key, 
-e.g., because the default JDK System Properties list on MS-Windows says
-${user.home}=C:/
+Actually this is implemented by looking in the system properties.
+E.g., assuming the default JDK System Properties list on MS-Windows says
+
+	${user.home}=C:/
+
 then a line like
-Look in /home/ian/testdata
+
+	Look in /home/ian/testdata
+
 will come out as
-Look in C:/testdata
+
+	Look in C:/testdata
 
 Changes are made only to files whose extensions are listed in 
 SUB_TEXT_FILE_EXTENS in the program, which currently includes
 most sensible filename endings, but you might want to review it.
 
-Note that no changes will be made in directories named CVS or .git or .metadata.
+Note that no changes will be made in directories named CVS, .svn, .git, .metadata, bin or target
+(see the file _IGNORE_DIRS_ in the source code).
 
 Finally, a list of files can be excluded by their full name. For example, if in an
 exercise, the student is directed to create a file from scratch, that file should
 obviously exist in the solution folder but not in the generated student folder.
-The filename "exclude-files.txt" may exist only in the root of a starting (solution)
+The filename _exclude-files.txt_ may exist only in the root of a starting (solution)
 directory, containing one filename per line, as for example:
 
 ----
@@ -79,13 +88,13 @@ $ cat ex21solution/exclude-files.txt
 EventsListerTest.java
 ----
 
-In this example, the file "EventListerTest.java' is the file the student must create,
-so neither it (nor, of course, the file ignore-files.txt) will be copied to the ex21 folder.
+In this example, the file _EventListerTest.java_ is the file the student must create,
+so neither it (nor, of course, the file _ignore-files.txt_) will be copied to the ex21 folder.
 
 === Customizing
 
 The text substitutions are loaded from a properties file to be easy to change, but
-if you do the documentation above will not strictly apply!
+if you do so, the documentation above will not strictly apply!
 
 The input format is: regex=replacement.  If you do need to change it,
 consult the included properties file to see the examples.
