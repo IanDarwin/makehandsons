@@ -71,11 +71,11 @@ will come out as
 	Look in C:/testdata
 
 Changes are made only to files whose extensions are listed in 
-SUB_TEXT_FILE_EXTENS in the program, which currently includes
+the variable _SUB_TEXT_FILE_EXTENS_ in the program, which currently includes
 most sensible filename endings, but you might want to review it.
 
 Note that no changes will be made in directories named CVS, .svn, .git, .metadata, bin or target
-(see the file _IGNORE_DIRS_ in the source code).
+(see the variable _IGNORE_DIRS_ in the source code).
 
 Finally, a list of files can be excluded by their full name. For example, if in an
 exercise, the student is directed to create a file from scratch, that file should
