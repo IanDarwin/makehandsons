@@ -289,12 +289,11 @@ public class MakeHandsOns {
 	
 	/** Copy one TEXT file, with substitutions. */
 	private void processTextFile(File file) {
-		BufferedReader is = null;
-		PrintWriter pw = null;
 		TextModes modes = new TextModes();
-		try {
-			pw = new PrintWriter(file.getAbsolutePath().replace(REMOVE_FROM_PATH, ""));
-			is = new BufferedReader(new FileReader(file));
+		try (
+			PrintWriter pw = new PrintWriter(file.getAbsolutePath().replace(REMOVE_FROM_PATH, ""));
+			BufferedReader is = new BufferedReader(new FileReader(file));
+			) {
 			String aline;
 			List<String> lines = new ArrayList<>();
 			while ((aline = is.readLine()) != null) {
@@ -315,16 +314,6 @@ public class MakeHandsOns {
 			}
 			if (modes.inCommentMode) {
 				System.err.println("WARNING: " + file + " file ends in commenting-out mode!");
-			}
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException annoyingLittleCheckedException) {
-					annoyingLittleCheckedException.printStackTrace();
-				}
-			}
-			if (pw != null) {
-				pw.close();
 			}
 		}
 	}
