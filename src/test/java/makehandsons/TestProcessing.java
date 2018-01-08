@@ -92,4 +92,18 @@ public class TestProcessing {
 	private void assertNotChanged(TextModes modes) {
 		assertFalse(modes.fileChanged);
 	}
+
+	@Test
+	public void testReplacementMode() {
+		List<String> input = Arrays.asList(
+			"//R This should appear",
+			"//-",
+			"int i = 0; // this should not appear",
+			"//+"
+			);
+
+		List<String> output = target.processTextFileLines(input, inputFile, modes);
+		assertEquals(1, output.size());
+		assertTrue(output.get(0).contains("should appear"));
+	}
 }
