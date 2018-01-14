@@ -7,7 +7,12 @@ import java.io.File;
 
 import org.junit.Test;
 
-public class IntegrationTest {
+/**
+ * Complete test.
+ * No server, so we call it *Test instead of 
+ * *IT for JUnit purposes.
+ */
+public class SystemTest {
 	
 	final static String INPUT_DIR = "inttestsolution";
 	final static String ACTUAL_DIR = "inttest";
@@ -34,6 +39,13 @@ public class IntegrationTest {
 	
 	@Test
 	public void testDetails() throws Exception {
+
+		System.out.println("SysProp('os.name') = " +
+			System.getProperty("os.name"));
+		// In case somebody forgot diff when installing cygwin
+		if ("windows".equalsIgnoreCase(System.getProperty("os.name"))) {
+			return;
+		}
 		
 		// Run the test subject!
 		MakeHandsOns.main(new String[]{INPUT_DIR});
