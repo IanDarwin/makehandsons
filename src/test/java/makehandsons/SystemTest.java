@@ -43,7 +43,7 @@ public class SystemTest {
 		System.out.println("SysProp('os.name') = " +
 			System.getProperty("os.name"));
 		// In case somebody forgot diff when installing cygwin
-		if ("windows".equalsIgnoreCase(System.getProperty("os.name"))) {
+		if (System.getProperty("os.name").startsWith("Windows")) {
 			return;
 		}
 		
