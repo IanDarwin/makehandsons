@@ -104,6 +104,42 @@ public class TestProcessing {
 
 		List<String> output = target.processTextFileLines(input, inputFile, modes);
 		assertEquals(1, output.size());
-		assertTrue(output.get(0).contains("should appear"));
+		assertTrue(output.get(0).contains("This should appear"));
 	}
+	
+	@Test
+	public void testExchangetMode() {
+		List<String> input = Arrays.asList(
+			"//X+ :::Replace This\\.:::With This",
+			"int i = 0; // Replace This.",
+			"//X-",
+			"int i = 1; // Replace This"
+			
+			);
+
+		List<String> output = target.processTextFileLines(input, inputFile, modes);
+		assertEquals(2, output.size());
+		assertTrue(output.get(0).contains("int i = 0;"));
+		assertTrue(output.get(0).contains("With This"));
+		assertTrue(output.get(1).contains("int i = 1;"));
+		assertTrue(output.get(1).contains("Replace This"));		
+	}
+	
+	@Test
+	public void testExchangeModeWithXML() {
+		List<String> input = Arrays.asList("<?xml version=\"1.0\" encoding=\"utf-8\"?>",
+		"<!-- //X+ :::android:id=\"@\\+id/expLst_layout\":::   -->",		
+		"<android.support.constraint.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"",
+		    "xmlns:app=\"http://schemas.android.com/apk/res-auto\"",
+		    "xmlns:tools=\"http://schemas.android.com/tools\"",
+		    "              ",
+		    "android:id=\"@+id/expLst_layout\"\\>");		
+
+
+		List<String> output = target.processTextFileLines(input, inputFile, modes);
+		assertEquals(6, output.size());
+		System.out.println(output.get(3)+ "===>" + "xmlns:tools=\"http://schemas.android.com/tools\"");
+		assertTrue(output.get(3).contains("xmlns:tools=\"http://schemas.android.com/tools\""));
+		assertTrue(output.get(5).contains("\\>"));
+	}	
 }

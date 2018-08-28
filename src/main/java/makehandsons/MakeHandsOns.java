@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -35,19 +36,9 @@ public class MakeHandsOns {
 	Properties sysProps = System.getProperties();
 	
 	/** The file extens that get replacements done */
-	final static String[] SUB_TEXT_FILE_EXTENS = {
-		".adoc",
-		".html",
-		".java",
-		".jsf",
-		".jsp",
-		".project",
-		".properties",
-		".txt",
-		".xhtml",
-		".xml",
-	};
-	
+	final static String[] SUB_TEXT_FILE_EXTENS = { ".adoc", ".html", ".java", ".jsf", ".jsp", ".project", ".properties",
+			".txt", ".xhtml", ".xml", ".gradle" };
+
 	/** The part of the directory name that gets removed. */
 	final static String REMOVE_FROM_PATH = "solution";
 	
@@ -57,6 +48,9 @@ public class MakeHandsOns {
 	private final static Pattern COMMENTMODE_START = Pattern.compile("^\\s*//C\\+");
 	private final static Pattern COMMENTMODE_END = Pattern.compile("^\\s*//C\\-");
 
+	
+	private final static Pattern EXCHANGEMODE_START = Pattern.compile("\\s*//X\\+");
+	private final static Pattern EXCHANGEMODE_END = Pattern.compile("\\s*//X\\-");	
 	//-
 	/* This should not appear in the output */
 	//+
@@ -64,7 +58,7 @@ public class MakeHandsOns {
 
 	/** directories to ignore */
 	final static String[] IGNORE_DIRS = { 
-		"CVS", ".svn", ".git", ".metadata", "bin", "target"
+		"CVS", ".svn", ".git", ".metadata", "bin", "target", "build"
 	};
 
 	/** Map from a compiled regex Pattern to its replacement String */
@@ -73,22 +67,43 @@ public class MakeHandsOns {
 	/** JUL logger */
 	private static Logger log;
 
-	public static void main(String[] args) throws Exception {
-		MakeHandsOns prog = new MakeHandsOns();
-		if (args.length == 0) {
-			System.err.printf("Usage: %s directory [...]%n", MakeHandsOns.class.getSimpleName());
-		} else if (args[0].equals("-h")) {
-			doHelp();
-		} else
-		for (String arg : args) {
-			if (".".equals(arg)) {
-				System.err.println(
-					"Sorry, you can't use '.', use '*solution' or individual solution directory.");
-				System.exit(42);
-			}
-			File fileArg = new File(arg);
-			prog.makeIgnoreList(fileArg);
-			prog.descendFileSystem(fileArg);
+	static {
+
+		InputStream logStream = MakeHandsOns.class.getClassLoader().getResourceAsStream("logging.properties");
+
+		try {
+			LogManager.getLogManager().readConfiguration(logStream);
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		log = Logger.getLogger(MakeHandsOns.class.getName());
+	}
+
+	public static void main(String[] args) {
+		System.out.println("Processing started (message via sysout)");
+		try {
+			MakeHandsOns prog = new MakeHandsOns();
+			if (args.length == 0) {
+				System.err.printf("Usage: %s directory [...]%n", MakeHandsOns.class.getSimpleName());
+			} else if (args[0].equals("-h")) {
+				doHelp();
+			} else
+				for (String arg : args) {
+					if (".".equals(arg)) {
+						System.err
+								.println("Sorry, you can't use '.', use '*solution' or individual solution directory.");
+						System.exit(42);
+					}
+					File fileArg = new File(arg);
+					prog.makeIgnoreList(fileArg);
+					prog.descendFileSystem(fileArg);
+				}
+		} catch (Exception e) {
+			System.out.println("Catastrophe: " + e.getMessage());
 		}
 	}
 	
@@ -99,7 +114,9 @@ public class MakeHandsOns {
 		"//- -> enter cut mode",
 		"//+ -> leave cut mode",
 		"//C+ -> enter comments mode",
-		"//C- -> leave comments mode"
+		"//C- -> leave comments mode",
+		"//X+ :::textToReplace:::replacementText-> enter exchange mode",
+		"//X- -> leave comments mode"		
 	};
 	
 	private static void doHelp() {
@@ -109,8 +126,9 @@ public class MakeHandsOns {
 	}
 
 	MakeHandsOns() {
-		// Change logging level in logging.properties, not here.
-		log = Logger.getLogger("makehandsons");
+
+
+		log.info("Program starting");
 
 		try (InputStream is = getClass().getResourceAsStream(PROPERTIES_FILENAME)) {
 			if (is == null) {
@@ -327,6 +345,7 @@ public class MakeHandsOns {
 	 */
 	public List<String> processTextFileLines(List<String> lines, File inputFile,
 			TextModes modes) {
+		Map<String,String> replaceMap = new HashMap<String,String>();
 		List<String> output = new ArrayList<>();
 		for (String line : lines) {
 			String oldLine = line;
@@ -357,15 +376,51 @@ public class MakeHandsOns {
 				modes.inCommentMode = modes.fileChanged = true;
 				continue;
 			}
+			if (modes.inExchangeMode) {
+				if (EXCHANGEMODE_START.matcher(line).find()) {
+					System.err.println("WARNING: " + inputFile + " has nested REPLACE_START codes");
+					replaceMap.clear();
+				}
+				if (EXCHANGEMODE_END.matcher(line).find()) {
+					modes.inExchangeMode = false;
+					replaceMap.clear();
+					continue;
+				}
+			}			
+			if (EXCHANGEMODE_START.matcher(line).find()) {
+				parseReplaceModeStart(replaceMap, line);
+				modes.inExchangeMode = modes.fileChanged = true;
+				continue;
+			}			
 			for (Pattern p : pattMap.keySet()) {
 				line = p.matcher(line).replaceAll(pattMap.get(p));
-				log.fine(String.format("Patt %s, line->%s", p, line));
+				log.finest(String.format("Patt %s, line->%s", p, line));
 			}
+			for (String p : replaceMap.keySet()) {
+				line = line.replace(p, replaceMap.get(p));
+				log.finest(String.format("Patt %s, line->%s", p, line));
+			}			
 			output.add(modes.inCommentMode ? "//" + line : line);
 			if (!line.equals(oldLine)) {
+				log.fine(String.format("Match in this line [%s] -->[%s]", oldLine, line));
 				modes.fileChanged = true;
 			}
 		}
 		return output;
+	}
+
+	/**
+	 * Get the replace tokens from the REPLACEMODE_START line
+	 * @param line
+	 */
+	private void parseReplaceModeStart(Map<String,String> replaceMap, String line) {
+			// Slightly fragile removal of an XML comment end if there is one!
+		line = line.replace("-->", "");
+		String[] tokens = line.split(":::");
+		if(tokens.length < 3) {
+				// Nasty hack to make sure there is a replace token
+			tokens = new String[] {tokens[0], tokens[1], ""};
+		}
+		replaceMap.put(tokens[1], tokens[2]);
 	}
 }
