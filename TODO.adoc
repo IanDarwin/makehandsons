@@ -1,15 +1,18 @@
 = MakeHandsOn Bug list / TODO list
 
-Option to remove-by-default each top-level project directory.
+Option to remove-by-default each top-level project (non-solution) directory.
 
 Run diff(1) on files that report changes; Generate HTML hints from the diffs.
 
+Document 
+
 There ought to be a way to build several related projects from the same tree.
 For example, a main solution and a bonus solution.
-This is left as a post-1.0-RELEASE proposal.
+Or several solutions form the same codebase.
+Think cpp's #ifdef, m4, etc.
 
-Add another mode (sorry!): //S- and //S+ for stuff that students should remove in the exercise
-and thus should be omitted from the solution (S-). ALAS, this would require rewriting the 
+Add another mode (sorry!): //K- and //K+ for stuff that students should remove in the exercise
+and thus should be omitted from the solution. ALAS, this would require rewriting the 
 Solution files as well as the student starting version files, which is just too dangerous!
 This would require us to go to the next level: Build both fooSolution and foo from fooMaster
 
