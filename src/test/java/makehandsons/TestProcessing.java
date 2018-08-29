@@ -104,7 +104,7 @@ public class TestProcessing {
 
 		List<String> output = target.processTextFileLines(input, inputFile, modes);
 		assertEquals(1, output.size());
-		assertTrue(output.get(0).contains("This should appear"));
+		assertTrue(output.get(0).contains("should appear"));
 	}
 	
 	@Test
