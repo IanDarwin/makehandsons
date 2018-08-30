@@ -46,13 +46,21 @@ will print one line (in addition to the TODO comment):
  This should appear.
 ----
 
-4) We remove "solution" from filenames in config files (so be warned: don't
+4) eXchange mode (//X) allows substitution of text with a block
+----
+//X+ :::text to change:::replacement text
+Inside this block, any instance of "text to change" will be replaced with "replacement text" 
+//X-
+----
+Note that it is a straight replacement and does not use regex's . Replacement starts immediately after the //X+ ... line and ends at //X-
+
+5) We remove "solution" from filenames in config files (so be warned: don't
 use the word 'solution' unless you mean it to go away in the non-solution.
 It is case sensitive so you can refer to "the Solution" and have it work OK.
 This sounds painful but is required so that the Eclipse .project/.classpath
 files will work
 
-5) Finally, we replace absolute paths. At present the value of ${user.home} gets
+6) Finally, we replace absolute paths. At present the value of ${user.home} gets
 turned into C:/.  If you have used any absolute paths (which you 
 shouldn't), this could save your bacon
 e.g., a line containing /home/ian/testdata would be changed to C:/testdata
