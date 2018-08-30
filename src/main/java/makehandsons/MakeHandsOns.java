@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -25,6 +24,7 @@ import java.util.regex.Pattern;
  * .java or .xml or ...), do substitution on each line with a given
  * set of replacement patterns (patterns and their
  * replacements are loaded from a Properties file).
+ * XXX This file is too big!
  * @author Ian Darwin
  */
 public class MakeHandsOns {
@@ -36,9 +36,23 @@ public class MakeHandsOns {
 	Properties sysProps = System.getProperties();
 	
 	/** The file extens that get replacements done */
-	final static String[] SUB_TEXT_FILE_EXTENS = { ".adoc", ".html", ".java", ".jsf", ".jsp", ".project", ".properties",
-			".txt", ".xhtml", ".xml", ".gradle" };
-
+	final static String[] SUB_TEXT_FILE_EXTENS = {
+		".adoc",
+		".gradle",
+		".html",
+		".java",
+		".jsf",
+		".jsp",
+		".project",
+		".properties",
+		".txt",
+		".xhtml",
+		".xml",
+	};
+	
+	/** tld == Top Level Directory */
+	static File tld = null;
+	
 	/** The part of the directory name that gets removed. */
 	final static String REMOVE_FROM_PATH = "solution";
 	
@@ -71,14 +85,12 @@ public class MakeHandsOns {
 
 		InputStream logStream = MakeHandsOns.class.getClassLoader().getResourceAsStream("logging.properties");
 
-		try {
-			LogManager.getLogManager().readConfiguration(logStream);
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (logStream != null) {
+			try {
+				LogManager.getLogManager().readConfiguration(logStream);
+			} catch (SecurityException | IOException e) {
+				System.err.println("Error loading logging.properties: " + e + "; trying anyway.");
+			}
 		}
 		log = Logger.getLogger(MakeHandsOns.class.getName());
 	}
@@ -94,8 +106,8 @@ public class MakeHandsOns {
 			} else
 				for (String arg : args) {
 					if (".".equals(arg)) {
-						System.err
-								.println("Sorry, you can't use '.', use '*solution' or individual solution directory.");
+						System.err.println(
+							"Sorry, you can't use '.', use '*solution' or individual solution directory.");
 						System.exit(42);
 					}
 					File fileArg = new File(arg);
@@ -214,6 +226,11 @@ public class MakeHandsOns {
 	 */
 	void descendFileSystem(File startDir) throws IOException {
 		log.fine(String.format("FileSub.searchFiles(%s)%n", startDir));
+		boolean setTld = false;
+		if (tld == null) {
+			tld = startDir;
+			setTld = true;
+		}
 		if (startDir.isDirectory()) {
 			String name = startDir.getName();
 			for (String dir : IGNORE_DIRS) {
@@ -230,6 +247,9 @@ public class MakeHandsOns {
 			processFile(startDir);
 		} else {
 			System.err.printf("Warning: %s neither file nor directory, ignoring%n", startDir);
+		}
+		if (setTld) {
+			tld = null;
 		}
 	}
 
@@ -339,6 +359,7 @@ public class MakeHandsOns {
 	/**
 	 * Do the actual work of massaging a text file's contents;
 	 * extracted from processTextFile to make testing easier
+	 * XXX change interface to this method to be a Stream (Java 8); still testable, less overhead
 	 * @param lines The List of lines in the file
 	 * @param inputFile The input File, only for printing errors
 	 * @param modes The state flags wrapper
@@ -347,8 +368,24 @@ public class MakeHandsOns {
 			TextModes modes) {
 		Map<String,String> replaceMap = new HashMap<String,String>();
 		List<String> output = new ArrayList<>();
+		if (tld == null) {
+			throw new RuntimeException("How you gat here?");
+		}
+		String defName = tld.getName();
+		boolean ppEating = false;
 		for (String line : lines) {
 			String oldLine = line;
+			if (line.startsWith("#endif")) {
+				ppEating = false;
+				continue;
+			}
+			if (line.startsWith("#if ")) {
+				ppEating = !line.endsWith(defName);
+				continue;
+			}
+			if (ppEating) {
+				continue;
+			}
 			if (modes.inCutMode) {
 				if (CUTMODE_START.matcher(line).find()) {
 					System.err.println("WARNING: " + inputFile + " has nested CUT_START codes");

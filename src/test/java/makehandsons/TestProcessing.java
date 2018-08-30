@@ -20,6 +20,7 @@ public class TestProcessing {
 	@Before
 	public void mehtUp() {
 		target = new MakeHandsOns();
+		target.tld = new File("testing");
 		modes = new TextModes();
 	}
 
@@ -119,6 +120,7 @@ public class TestProcessing {
 
 		List<String> output = target.processTextFileLines(input, inputFile, modes);
 		assertEquals(2, output.size());
+		output.forEach(System.out::println);
 		assertTrue(output.get(0).contains("int i = 0;"));
 		assertTrue(output.get(0).contains("With This"));
 		assertTrue(output.get(1).contains("int i = 1;"));
@@ -142,4 +144,22 @@ public class TestProcessing {
 		assertTrue(output.get(3).contains("xmlns:tools=\"http://schemas.android.com/tools\""));
 		assertTrue(output.get(5).contains("\\>"));
 	}	
+
+	public void testIfDef() {
+		List<String> input = Arrays.asList(
+				"Hello",
+				"#if testing",
+				"foo",
+				"#endif",
+				"#if meh",
+				"bar",
+				"#endif",
+				"Goodbye"
+				);
+		List<String> output = target.processTextFileLines(input, inputFile, modes);
+		assertEquals(3, output.size());
+		assertEquals("Hello", output.get(0));
+		assertEquals("foo", output.get(1));
+		assertEquals("Goodbye", output.get(2));
+	}
 }
