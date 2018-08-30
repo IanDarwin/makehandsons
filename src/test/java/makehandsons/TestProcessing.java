@@ -111,7 +111,7 @@ public class TestProcessing {
 	@Test
 	public void testExchangetMode() {
 		List<String> input = Arrays.asList(
-			"//X+ :::Replace This\\.:::With This",
+			"//X+ :::Replace This.:::With This",
 			"int i = 0; // Replace This.",
 			"//X-",
 			"int i = 1; // Replace This"
