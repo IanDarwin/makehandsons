@@ -2,6 +2,9 @@
 
 Option to remove-by-default each top-level project (non-solution) directory.
 
+Option to omit generating certain folders, so you can have ex31solution and ex31bonussolution and only
+wind up with ex31.
+
 Run diff(1) on files that report changes; Generate HTML hints from the diffs.
 
 Document 
