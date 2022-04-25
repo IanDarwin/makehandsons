@@ -20,7 +20,7 @@ public class TestProcessing {
 	@Before
 	public void mehtUp() {
 		target = new MakeHandsOns();
-		target.tld = new File("testing");
+		MakeHandsOns.tld = new File("testing");
 		modes = new TextModes();
 	}
 
