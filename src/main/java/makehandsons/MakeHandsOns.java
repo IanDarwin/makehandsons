@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +24,7 @@ import java.util.regex.Pattern;
  * .java or .xml or ...), do substitution on each line with a given
  * set of replacement patterns (patterns and their
  * replacements are loaded from a Properties file).
- * XXX This file is too big!
+ * XXX This file may be too big!
  * @author Ian Darwin
  */
 public class MakeHandsOns {
@@ -85,7 +84,8 @@ public class MakeHandsOns {
 
 	static {
 
-		InputStream logStream = MakeHandsOns.class.getClassLoader().getResourceAsStream("logging.properties");
+		InputStream logStream = 
+			MakeHandsOns.class.getClassLoader().getResourceAsStream("logging.properties");
 
 		if (logStream != null) {
 			try {
@@ -98,7 +98,7 @@ public class MakeHandsOns {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("Processing started (message via sysout)");
+		System.err.println("MakeHandsOns Processing started");
 		try {
 			MakeHandsOns prog = new MakeHandsOns();
 			if (args.length == 0) {
@@ -123,27 +123,23 @@ public class MakeHandsOns {
 		}
 	}
 	
-	static final String[] HELP_TEXT = {
-		"This program generates the exercises from the solutions",
-		"//T -> // TODO ",
-		"//H -> // *HINT*",
-		"//- -> enter cut mode",
-		"//+ -> leave cut mode",
-		"//C+ -> enter comments mode",
-		"//C- -> leave comments mode",
-		"//X+ :::textToReplace:::replacementText-> enter exchange mode",
-		"//X- -> leave comments mode"		
-	};
+	static final String HELP_TEXT = """
+		This program generates the exercises from the solutions
+		//T -> // TODO
+		//H -> // *HINT*
+		//- -> enter cut mode
+		//+ -> leave cut mode
+		//R -> replacement text for what got cut
+		//X+ :::textToReplace:::replacementText-> enter exchange mode
+		//X- -> leave exchange (text replacement) mode		
+		""";
 	
 	private static void doHelp() {
-		for (String h : HELP_TEXT) {
-			System.out.println(h);
-		}
+		System.out.println(HELP_TEXT);
 	}
 
 	MakeHandsOns() {
-
-		log.info("Program starting");
+		log.info("MakeHandsOns.MakeHandsOns()");
 
 		try (InputStream is = getClass().getResourceAsStream(PROPERTIES_FILENAME)) {
 			if (is == null) {
@@ -151,7 +147,7 @@ public class MakeHandsOns {
 			}
 			pattMap = loadPatterns(is);
 		} catch (IOException ex) {
-			throw new ExceptionInInitializerError("CANTHAPPEN, did");
+			throw new ExceptionInInitializerError("CANTHAPPEN, but did");
 		}
 	}
 	
@@ -212,7 +208,7 @@ public class MakeHandsOns {
 		}
 	}
 	
-	/** Load (and compile) the Pattern file, a list
+	/** Load (and compile) the Pattern file, a Properties list
 	 * of x=y, where x is a regex pattern and y
 	 * is a replacement value.
 	 */
@@ -225,7 +221,7 @@ public class MakeHandsOns {
 		}
 		
 		Map<Pattern,String> pattMap = new HashMap<Pattern,String>();
-		for (Object k : p.keySet()) {
+		p.keySet().forEach(k -> {
 			String key = (String)k;
 			String repl = p.getProperty(key);
 			log.finer("load: " + key + "->" + repl);
@@ -241,7 +237,7 @@ public class MakeHandsOns {
 			log.fine(String.format("loadPatterns() key '%s' value '%s'", key, repl));
 			Pattern pat = Pattern.compile(key);
 			pattMap.put(pat, repl);
-		}
+		});
 		return pattMap;
 	}
 
@@ -316,7 +312,7 @@ public class MakeHandsOns {
 			}
 			return;
 		}
-		log.fine(String.format("FileSub.processFile(%s->%s)%n", file, newAbsPath));		
+		log.fine(String.format("MakeHandsOn.processFile(%s->%s)%n", file, newAbsPath));		
 		if (isTextFile(file.getName())) {
 			processTextFile(file);
 		} else {						// copy as binary
@@ -330,7 +326,7 @@ public class MakeHandsOns {
 	 * NO markup handling!
 	 * @author Adapted from c.d.io.FileIO
 	 */
-	public static void copyFile(File file, File target) throws IOException {
+	public void copyFile(File file, File target) throws IOException {
 		if (!file.exists() || !file.isFile() || !(file.canRead())) {
 			throw new IOException(file + " is not a readable file");
 		}
@@ -339,21 +335,13 @@ public class MakeHandsOns {
 		if (target.isDirectory()) {
 			dest = new File(dest, file.getName());
 		}
-		InputStream is = null;
-		OutputStream os  = null;
-		try {
-			is = new FileInputStream(file);
-			os = new FileOutputStream(dest);
+		try (InputStream is = new FileInputStream(file);
+			OutputStream os = new FileOutputStream(dest);) {
 			int count = 0;		// the byte count
 			byte[] b = new byte[BLKSIZ];	// the bytes read from the file
 			while ((count = is.read(b)) != -1) {
 				os.write(b, 0, count);
 			}
-		} finally {
-			if (is != null)
-				is.close();
-			if (os != null)
-				os.close();
 		}
 	}
 	
