@@ -38,7 +38,7 @@ public class TestProcessing {
 
 	@Test
 	public void testCutModeJava() {
-		List<String> input = Arrays.asList(
+		List<String> input = List.of(
 			"//-",
 			"/* This should not appear in the output */",
 			"//+",
