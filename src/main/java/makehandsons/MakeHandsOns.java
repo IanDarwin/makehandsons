@@ -316,7 +316,6 @@ public class MakeHandsOns {
 			}
 			return;
 		}
-		newFile.getParentFile().mkdirs();
 		log.fine(String.format("FileSub.processFile(%s->%s)%n", file, newAbsPath));		
 		if (isTextFile(file.getName())) {
 			processTextFile(file);
@@ -335,6 +334,7 @@ public class MakeHandsOns {
 		if (!file.exists() || !file.isFile() || !(file.canRead())) {
 			throw new IOException(file + " is not a readable file");
 		}
+		target.getParentFile().mkdirs();
 		File dest = target;
 		if (target.isDirectory()) {
 			dest = new File(dest, file.getName());
@@ -360,8 +360,10 @@ public class MakeHandsOns {
 	/** Copy one TEXT file, with substitutions. */
 	private void processTextFile(File file) {
 		TextModes modes = new TextModes();
+		String path = file.getAbsolutePath().replace(REMOVE_FROM_PATH, "");
+		new File(path).getParentFile().mkdirs();
 		try (
-			PrintWriter pw = new PrintWriter(file.getAbsolutePath().replace(REMOVE_FROM_PATH, ""));
+			PrintWriter pw = new PrintWriter(path);
 			BufferedReader is = new BufferedReader(new FileReader(file));
 			) {
 			String aline;
