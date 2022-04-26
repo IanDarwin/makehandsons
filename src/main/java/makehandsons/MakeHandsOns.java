@@ -119,6 +119,7 @@ public class MakeHandsOns {
 				}
 		} catch (Exception e) {
 			System.out.println("Catastrophe: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	
