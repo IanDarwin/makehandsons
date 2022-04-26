@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,12 +31,12 @@ import java.util.regex.Pattern;
 public class MakeHandsOns {
 	
 	private static final String EXCLUDE_FILES_FILENAME = "exclude-files.txt";
-
+	private static final String VERBATIM_FILES_FILENAME = "verbatim-files.txt";
 	private static final String PROPERTIES_FILENAME = "/makehandsons.properties";
 
 	Properties sysProps = System.getProperties();
 	
-	/** The file extens that get replacements done */
+	/** The file extens that DO get replacements done */
 	final static String[] SUB_TEXT_FILE_EXTENS = {
 		".adoc",
 		".gradle",
@@ -43,6 +44,7 @@ public class MakeHandsOns {
 		".java",
 		".jsf",
 		".jsp",
+		".json",
 		".project",
 		".properties",
 		".txt",
@@ -112,6 +114,7 @@ public class MakeHandsOns {
 					}
 					File fileArg = new File(arg);
 					prog.makeIgnoreList(fileArg);
+					prog.makeVerbatimList(fileArg);
 					prog.descendFileSystem(fileArg);
 				}
 		} catch (Exception e) {
@@ -138,7 +141,6 @@ public class MakeHandsOns {
 	}
 
 	MakeHandsOns() {
-
 
 		log.info("Program starting");
 
@@ -167,6 +169,27 @@ public class MakeHandsOns {
 					continue;
 				}
 				excludeFiles.add(line);
+			}
+		}
+	}
+	
+	List<String> verbatimFiles = new ArrayList<>();
+	
+	void makeVerbatimList(File dir) throws IOException {
+		verbatimFiles.clear();
+		final File verbatimeFilesFile = 
+			new File(dir, VERBATIM_FILES_FILENAME);
+		if (!verbatimeFilesFile.exists()) {
+			return;
+		}
+		try (BufferedReader is = 
+			new BufferedReader(new FileReader(verbatimeFilesFile))) {
+			String line;
+			while ((line = is.readLine()) != null) {
+				if (line.length() == 0 || line.startsWith("#")) {
+					continue;
+				}
+				verbatimFiles.add(line);
 			}
 		}
 	}
@@ -221,7 +244,10 @@ public class MakeHandsOns {
 		return pattMap;
 	}
 
-	/** Work through the starting directory, mapping it to destDir 
+	/** 
+	 * Work down through the starting directory and subdirs,
+	 * mapping each to destDir. 
+	 * Called recursively.
 	 * @throws IOException When Java IO does
 	 */
 	void descendFileSystem(File startDir) throws IOException {
@@ -268,7 +294,13 @@ public class MakeHandsOns {
 		File newFile = new File(newAbsPath);
 		log.fine("NEW ABS PATH = " + newAbsPath);
 		if (name == null || name.length() == 0 ||
-			EXCLUDE_FILES_FILENAME.equals(name)) {
+			EXCLUDE_FILES_FILENAME.equals(name) ||
+			VERBATIM_FILES_FILENAME.equals(name)) {
+			return;
+		}
+		// Verbatim files get copied unmolested
+		if (verbatimFiles.contains(name)) {
+			copyFile(file, newFile);
 			return;
 		}
 		if (excludeFiles.contains(name)) {
@@ -277,7 +309,7 @@ public class MakeHandsOns {
 				log.severe("Excluded file exists: " + newAbsPath + "; nuking it!");
 				newFile.delete();
 				if (newFile./*still*/exists()) {
-					// Fail early and often.
+					// Fail early and (not too) often.
 					throw new IllegalArgumentException("Sob! Tried to delete " + newAbsPath + " but failed!");
 				}
 			}
@@ -288,17 +320,16 @@ public class MakeHandsOns {
 		if (isTextFile(file.getName())) {
 			processTextFile(file);
 		} else {						// copy as binary
-			try {
-				copyFile(file, newFile);
-			} catch (IOException e) {
-				System.err.println("Failed to copy " + file + "; " + e);
-			}
+			copyFile(file, newFile);
 		}		
 	}
 	
-	private static int BLKSIZ = 4096;
+	private static int BLKSIZ = 8192;
 	
-	/** Copy a BINARY file. Copied from c.d.io.FileIO */
+	/** Copy a file in BINARY mode. 
+	 * NO markup handling!
+	 * @author Adapted from c.d.io.FileIO
+	 */
 	public static void copyFile(File file, File target) throws IOException {
 		if (!file.exists() || !file.isFile() || !(file.canRead())) {
 			throw new IOException(file + " is not a readable file");
@@ -448,7 +479,8 @@ public class MakeHandsOns {
 
 	/**
 	 * Get the replace tokens from the REPLACEMODE_START line
-	 * @param line
+	 * @param line The input string to be modified
+	 * @author Mike Way
 	 */
 	private void parseReplaceModeStart(Map<String,String> replaceMap, String line) {
 			// Slightly fragile removal of an XML comment end if there is one!
