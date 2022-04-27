@@ -1,4 +1,4 @@
-== MakeHandsOn, the Student Assignment Generator
+= MakeHandsOn, the Student Assignment Generator
 
 This makes up student "todo" exercise directories directly from the solutions.
 The ideal target is a class where students are given (or checkout from a DVCS)
@@ -29,9 +29,9 @@ This program performs various substitutions on files. It creates a copy
 of each "xxxsolution" directory as "xxx" (which must not exist),
 making all the line-based changes shown below.
 
-=== Marking up the solution version of files
+== Marking up the solution version of files
 
-==== Cut Mode
+=== Cut Mode
 
 The following line-based changes are baked into the code:
 
@@ -40,7 +40,7 @@ The following line-based changes are baked into the code:
 The //- and //+ must each be on a line by itself; indentation is allowed but
 no other characters before or after.
 
-==== Replacement Text for Cut Mode
+=== Replacement Text for Cut Mode
 
 Use //R for replacement variables, that is, placeholders for stuff that gets cut.
 This can be useful to make the exercise code compile without errors.
@@ -65,19 +65,19 @@ int i = 0;
 Thus any following code that requires _i_ will compile, though not yield the correct
 value until the student completes the ToDo step.
 
-==== ToDo Items
+=== ToDo Items
 
 In the Solutions input folder, you proably want to mark TODO lines with //T instead of // TODO 
 so the solution doesn't show in Tasks Window in Eclipse (since you should only be editing the solutions versions).
 //T (with a space after!) gets turned into // TODO in the exercise version.
 
-==== Hints
+=== Hints
 
 	//H  becomes // *HINT*
 
 It's easier on the eyes when editing the solution version, but makes the hint stand out in the student version.
 
-=== Text Substitution
+== Text Substitution
 
 eXchange mode (//X) allows substitution of text with a block
 ----
@@ -87,15 +87,15 @@ Inside this block, any instance of "text to change" will be replaced with "repla
 ----
 Note that it is a straight replacement and does not use regex's . Replacement starts immediately after the //X+ ... line and ends at //X-
 
-==== s/solution//g, or, Creating Output that doesn't say "solution"
+=== s/solution//g, or, Creating Output that doesn't say "solution"
 
-We remove "solution" from filenames in all files including config files (so be warned: don't
+We remove "solution" from filenames in most files including config files (so be warned: don't
 use the word 'solution' unless you mean it to go away in the non-solution version.
 It is case sensitive so you can refer to "the Solution" and have it work OK.
 This sounds painful but is required so that the Eclipse .project/.classpath
 files will work
 
-==== Fixing Absolute Paths
+=== Fixing Absolute Paths
 
 Finally, we replace absolute paths. At present the value of the ${user.home} variable gets
 turned into C:/.  If you have used any absolute paths (which you 
@@ -115,7 +115,7 @@ will come out in the student exercises version as
 
 	Look in C:/testdata
 
-=== Files
+== Files
 
 Changes are made only to files whose extensions are listed in 
 the variable _SUB_TEXT_FILE_EXTENS_ in the program, which currently includes
@@ -141,7 +141,7 @@ so neither it (nor, of course, the file _ignore-files.txt_) will be copied to th
 Similarly, a list of files that must not be modified can be created in a file named __verbatim-files.txt__.
 Typical uses include binary files, and files containing markup that conflicts with that of this program.
 
-=== Customizing
+== Customizing The Substitutions
 
 The text substitutions are loaded from a properties file to be easy to change, but
 if you do so, the documentation above will not strictly apply!
@@ -154,8 +154,9 @@ re-generating the Jar file (see "Rebuilding" below). You could probably
 just put the new properties file on your CLASSPATH ahead of the jar file, 
 but this hasn't been tested.
 
-=== Generating the Non_solution Versions from the Marked-up Solutions
+== Generating the Non-solution Versions from the Marked-up Solutions
 
+After all that markup, you are ready to build the non-solution versions.
 Each folder should be named foosolution, e.g., ex41solution. This will create ex41.
 
 Then run "java -jar makehandson.jar *solution" in the crsXXX
@@ -163,18 +164,18 @@ directory. This will create ex11 from ex11solution, and so on.
 
 There is a script in the scripts folder that may work for you if you do "mvn install".
 
-=== Rebuilding the Program
+== Rebuilding the Program
 
 The source file for makehandson is an Eclipse project. Open it in Eclipse
 and make any changes.
 
 Or, using Maven, just do _mvn package_
 
-=== Bugs/ToDos
+== Bugs/ToDos
 
 See the file TODO.txt
 
-=== Modifying the Program
+== Modifying the Program
 
 Well, this is Github, so just fork it and hack away. If you make it better,
 send me a note and a pull request.
