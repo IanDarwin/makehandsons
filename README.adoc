@@ -127,8 +127,8 @@ Note that no changes will be made in directories named CVS, .svn, .git, .metadat
 A list of files can be excluded by their full name. For example, if in an
 exercise, the student is directed to create a file from scratch, that file should
 obviously exist in the solution folder but not in the generated student folder.
-The filename _exclude-files.txt_ may exist only in the root of a starting (solution)
-directory, containing one filename per line, as for example:
+The filename _exclude-files.txt_ may exist _only in the root of a starting (solution)
+directory_, containing one filename per line, as for example:
 
 ----
 $ cat ex21solution/exclude-files.txt
