@@ -1,7 +1,17 @@
 == MakeHandsOn, the Student Assignment Generator
 
 This makes up student "todo" exercise directories directly from the solutions.
-The benefits include the following:
+The ideal target is a class where students are given (or checkout from a DVCS)
+a folder with exercises and their solutions, with names like
+
+	ex11
+	ex11solution
+	ex21
+	ex21solution
+
+and so on (ex21 is the chapter 2 exercise #1 in this example).
+
+The program's benefits include the following:
 
 * To the instructor, a lot less work!
 * To the student, the ability to *reliably* compare their work-in-progress
@@ -21,35 +31,55 @@ making all the line-based changes shown below.
 
 === Marking up the solution version of files
 
+==== Cut Mode
+
 The following line-based changes are baked into the code:
 
 	//- through to //+ inclusive are DELETED from the output
 	
-Other changes are configurable (see below). The following are currently
-provided:
+The //- and //+ must each be on a line by itself; indentation is allowed but
+no other characters before or after.
 
-1) In the Solutions input folder, you need to mark TODO lines with //T instead of // TODO 
-so the solution doesn't show in Tasks Window in Eclipse (since you should only be editing the solutions versions).
-//T (with a space after!) gets turned into // TODO in the exercise version.
+==== Replacement Text for Cut Mode
 
-2) //H  becomes // *HINT*
-
-3) Use //R for replacement variables, that is, placeholders for stuff that gets cut.
+Use //R for replacement variables, that is, placeholders for stuff that gets cut.
 This can be useful to make the exercise code compile without errors.
+This must go before the //- ... //+ section.
 For example:
+
 ----
-"//T Create an int variable i containing the expression shown in the notes.
+"//T Compute in int variable i the value of the expression shown in the notes.
 "//R int i = 0;
 "//-",
 "int i = Math.sqrt(jNumber) * Math.cos(kNumber);
 "//+"
 ----
-will generate one line in the output file (in addition to the TODO comment):
+
+This will generate these two lines in the output file:
+
 ----
+// TODO  Compute in int variable i the value of the expression shown in the notes.
 int i = 0;
 ----
 
-4) eXchange mode (//X) allows substitution of text with a block
+Thus any following code that requires _i_ will compile, though not yield the correct
+value until the student completes the ToDo step.
+
+==== ToDo Items
+
+In the Solutions input folder, you proably want to mark TODO lines with //T instead of // TODO 
+so the solution doesn't show in Tasks Window in Eclipse (since you should only be editing the solutions versions).
+//T (with a space after!) gets turned into // TODO in the exercise version.
+
+==== Hints
+
+	//H  becomes // *HINT*
+
+It's easier on the eyes when editing the solution version, but makes the hint stand out in the student version.
+
+=== Text Substitution
+
+eXchange mode (//X) allows substitution of text with a block
 ----
 //X+ :::text to change:::replacement text
 Inside this block, any instance of "text to change" will be replaced with "replacement text" 
@@ -57,13 +87,17 @@ Inside this block, any instance of "text to change" will be replaced with "repla
 ----
 Note that it is a straight replacement and does not use regex's . Replacement starts immediately after the //X+ ... line and ends at //X-
 
-5) We remove "solution" from filenames in config files (so be warned: don't
-use the word 'solution' unless you mean it to go away in the non-solution.
+==== s/solution//g, or, Creating Output that doesn't say "solution"
+
+We remove "solution" from filenames in all files including config files (so be warned: don't
+use the word 'solution' unless you mean it to go away in the non-solution version.
 It is case sensitive so you can refer to "the Solution" and have it work OK.
 This sounds painful but is required so that the Eclipse .project/.classpath
 files will work
 
-6) Finally, we replace absolute paths. At present the value of the ${user.home} variable gets
+==== Fixing Absolute Paths
+
+Finally, we replace absolute paths. At present the value of the ${user.home} variable gets
 turned into C:/.  If you have used any absolute paths (which you 
 shouldn't), this could save your bacon
 e.g., a line containing /home/ian/testdata would be changed to C:/testdata
@@ -81,6 +115,8 @@ will come out in the student exercises version as
 
 	Look in C:/testdata
 
+=== Files
+
 Changes are made only to files whose extensions are listed in 
 the variable _SUB_TEXT_FILE_EXTENS_ in the program, which currently includes
 most sensible filename endings, but you might want to review it.
@@ -88,7 +124,7 @@ most sensible filename endings, but you might want to review it.
 Note that no changes will be made in directories named CVS, .svn, .git, .metadata, bin or target
 (see the variable _IGNORE_DIRS_ in the source code).
 
-Finally, a list of files can be excluded by their full name. For example, if in an
+A list of files can be excluded by their full name. For example, if in an
 exercise, the student is directed to create a file from scratch, that file should
 obviously exist in the solution folder but not in the generated student folder.
 The filename _exclude-files.txt_ may exist only in the root of a starting (solution)
@@ -101,6 +137,9 @@ EventsListerTest.java
 
 In this example, the file _EventListerTest.java_ is the file the student must create,
 so neither it (nor, of course, the file _ignore-files.txt_) will be copied to the ex21 folder.
+
+Similarly, a list of files that must not be modified can be created in a file named __verbatim-files.txt__.
+Typical uses include binary files, and files containing markup that conflicts with that of this program.
 
 === Customizing
 

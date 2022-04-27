@@ -2,3 +2,4 @@ build
 target
 inttest
 /makehandson.log.*
+.idea

@@ -32,7 +32,6 @@
 
 	<build>
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -45,6 +44,30 @@
 							<classpathPrefix>lib/</classpathPrefix>
 							<classpathLayoutType>repository</classpathLayoutType>
 						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<!-- Uber-jar: use 'mvn package assembly:single' to get 
+			 *** the runnable jar created in 'target'
+			 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true
+							</addDefaultImplementationEntries>
+							<mainClass>makehandsons.MakeHandsOns</mainClass>
+							<!-- <manifestFile>manifest.stub</manifestFile> -->
+						</manifest>
+						<manifestEntries>
+							<Vendor-URL>http://darwinsys.com/freeware/</Vendor-URL>
+						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>

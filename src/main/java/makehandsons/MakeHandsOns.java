@@ -57,8 +57,8 @@ public class MakeHandsOns {
 	/** The part of the directory name that gets removed. */
 	final static String REMOVE_FROM_PATH = "solution";
 	
-	private final static Pattern CUTMODE_START = Pattern.compile("\\s*//-");
-	private final static Pattern CUTMODE_END = Pattern.compile("\\s*//\\+");
+	private final static Pattern CUTMODE_START = Pattern.compile("^\\s*//-$");
+	private final static Pattern CUTMODE_END = Pattern.compile("^\\s*//\\+$");
 
 	private final static Pattern COMMENTMODE_START = Pattern.compile("^\\s*//C\\+");
 	private final static Pattern COMMENTMODE_END = Pattern.compile("^\\s*//C\\-");
@@ -127,9 +127,9 @@ public class MakeHandsOns {
 		This program generates the exercises from the solutions
 		//T -> // TODO
 		//H -> // *HINT*
-		//- -> enter cut mode
-		//+ -> leave cut mode
-		//R -> replacement text for what got cut
+		//- -> enter cut mode, delete lines up to //+
+		//R -> replacement text for what got cut (precedes //-)
+		//C+ -> enter comment-out mode, up to //C-
 		//X+ :::textToReplace:::replacementText-> enter exchange mode
 		//X- -> leave exchange (text replacement) mode		
 		""";
