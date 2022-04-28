@@ -71,6 +71,8 @@ and not filling in the student's TODOs at this stage!).
 The //- and //+ must each be on a line by itself; indentation is allowed but
 no other characters before or after.
 
+If //R has been given (see below), it will replace the cut lines.
+
 === Replacement Text for Cut Mode
 
 Use //R for replacement variables, that is, placeholders for stuff that gets cut.
