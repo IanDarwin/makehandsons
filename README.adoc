@@ -54,15 +54,17 @@ been needed up til now.
 
 == Marking up the solution version of files
 
+The following line-based changes are baked into the code:
+
 === ToDo Items
 
-In the Solutions input folder, you proably want to mark TODO lines with //T instead of // TODO 
-so the solution doesn't show in Tasks Window in Eclipse (since you should only be editing the solutions versions).
-//T (with a space after!) gets turned into // TODO in the exercise version.
+In the Solutions input folder, you can mark TODO lines with //T instead of // TODO 
+so the solution doesn't show in Tasks Window in Eclipse (since you should only be editing the solutions versions,
+and not filling in the student's TODOs at this stage!).
+
+	//T (with a space after!) gets turned into // TODO in the exercise version.
 
 === Cut Mode
-
-The following line-based changes are baked into the code:
 
 	//- through to //+ inclusive are DELETED from the output
 	
@@ -96,8 +98,9 @@ value until the student completes the ToDo step.
 
 === Comment-Out Mode
 
-Lines of code can be left in the student version but commented out, using //C+ and //C-
-(these tags can be indented but each must otherwise be on a line by itself.
+Lines of code can be left in the student version but commented out, using the C99/C++/Java/C# convention *//*.
+Control this using //C+ and //C-
+(these tags can be indented but each must otherwise be on a line by itself).
 
 	//C+
 	int x = 42;
