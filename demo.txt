@@ -1,0 +1,21 @@
+This is a text file. To run it, put it in a directory
+called ex99solution, and in the directory above that,
+run "makehandsons ex99solution".
+
+//-
+These lines will not appear #1.
+//+
+This line will appear #1.
+
+//R This will replace the line below #2.
+//-
+This line will not appear #2.
+//+
+
+#if ex99solution
+This will appear because of CPP-mode
+#endif
+
+#if ex88solution
+This will not appear because of CPP-mode
+#endif

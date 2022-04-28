@@ -118,7 +118,7 @@ results in:
 
 It's easier on the eyes when editing the solution version, but makes the hint stand out in the student version.
 
-== Text Substitution
+=== Text Substitution
 
 eXchange mode (//X) allows substitution of text with a block
 
@@ -129,6 +129,18 @@ Inside this block, any instance of "text to change" will be replaced with "repla
 ----
 
 Note that it is a straight replacement and does not use regex's . Replacement starts immediately after the //X+ ... line and ends at //X-
+
+=== Conditional Output
+
+The program implements a small subset of the C Pre-processor to allow conditional processing.
+
+	#if	ex42solution
+	This text will only appear if we are running
+	from the ex42solution directory, not from, say
+	ex24solution.
+	#endif
+
+This allows linked or symlinked files, which can certainly be convenient for maintenance if done carefully.
 
 === Creating Output that doesn't say "solution"
 

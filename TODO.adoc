@@ -1,5 +1,9 @@
 = MakeHandsOn Bug list / TODO list
 
+== Trivial fixes
+
+Make sure that the //R text is nullified when processing //-
+
 == Options to add
 
 Option -c/--clobber to remove-by-default each top-level project (non-solution) directory before starting it.
@@ -10,6 +14,8 @@ Option -o/--output to output into a different folder, for peeps that don't want 
 have access to the solutions, or who want to dole them out one at a time, etc.
 
 Option -l/--leadin to use a different comment lead-in (like "#" for Python, Awk, and many other Unix-based scripting languages).
+
+Move CPP-mode variable 'ppEating' (local inside processTextFileLines) into TextModes.
 
 Option to omit generating certain folders, so you can have ex31solution and ex31bonussolution and only
 wind up with ex31 (though, probably better done in a controlling shell script).
