@@ -26,14 +26,21 @@ with the working solution.
 
 The starting assumption is that all the files for the course are organized
 into directories, one per assignment, rather like (say) an Eclipse workspace.
-In particular, the working versions should be stored in folders called "xxxsolution",
+In particular, the working versions should be stored in folders called "xxsolution",
 e.g., "ex51solution" might be the solution version of Exercise 5.1.
 
-In fact, this has only been tested with Eclipse. It _should_ work with other IDEs
-such as IntelliJ/AndroidStudio, but this has not been tested yet. Soon!
+While my background is in teaching Java, and the initial users have been Java instructors,
+the program is not limited to working on Java programs; it could be
+used on any programming language or, indeed, on anything that is text based
+(as all document files should be; see https://asciidoctor.org[AsciiDoc]).
+It is _not_ intended to make changes in binary files (images, office documents, or any other non-text format),
+though it will copy them unchanged into the student folders.
+
+The program has so far been tested with Eclipse and Android Studio.
+It _should_ work with any other sane IDE, but this has not been tested yet.
 
 This program performs various substitutions on files. It creates a copy
-of each "xxxsolution" directory as "xxx" (which must not exist),
+of each "xxsolution" directory as "xx" (which must not exist),
 making all the line-based changes shown below.
 
 == Pre-requisites
@@ -44,11 +51,14 @@ will install a minimal JVM that the program has been tested with.
 My initial target was Java course developers, so the installer hasn't
 been needed up til now.
 
-Note that the program is not limited to working on Java programs; it could be
-used on any programming languages or, indeed, on anything that is text based
-(as all document files should be; see https://asciidoctor.org[AsciiDoc]).
 
 == Marking up the solution version of files
+
+=== ToDo Items
+
+In the Solutions input folder, you proably want to mark TODO lines with //T instead of // TODO 
+so the solution doesn't show in Tasks Window in Eclipse (since you should only be editing the solutions versions).
+//T (with a space after!) gets turned into // TODO in the exercise version.
 
 === Cut Mode
 
@@ -96,12 +106,6 @@ Lines of code can be left in the student version but commented out, using //C+ a
 results in:
 
 	// int x = 42;
-
-=== ToDo Items
-
-In the Solutions input folder, you proably want to mark TODO lines with //T instead of // TODO 
-so the solution doesn't show in Tasks Window in Eclipse (since you should only be editing the solutions versions).
-//T (with a space after!) gets turned into // TODO in the exercise version.
 
 === Hints
 
@@ -193,7 +197,7 @@ but this hasn't been tested.
 After all that markup, you are ready to build the non-solution versions.
 Each folder should be named foosolution, e.g., ex41solution. This will create ex41.
 
-Then run "java -jar makehandson.jar *solution" in the crsXXX
+Then run "java -jar makehandson.jar *solution" in the crsNNN
 directory. This will create ex11 from ex11solution, and so on.
 
 There is a Unix script in the scripts folder that may work for you if you do "mvn install".
