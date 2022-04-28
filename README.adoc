@@ -1,4 +1,6 @@
 = MakeHandsOn, the Student Assignment Generator
+:author: Ian Darwin
+:email: https://darwinsys.com/java
 
 This makes up student "todo" exercise directories directly from the solutions.
 The ideal target is a class where students are given (or checkout from a DVCS)
@@ -11,9 +13,14 @@ a folder with exercises and their solutions, with names like
 
 and so on (ex21 is the chapter 2 exercise #1 in this example).
 
+Where I come from (commercial training) we let the students have access to the solutions
+in case they get stuck and would rather see the code.
+In some academic situations this may not be acceptable, so there is a change request for an option
+to put the students' exercises into a separate folder that you can distribute.
+
 The program's benefits include the following:
 
-* To the instructor, a lot less work!
+* To the instructor, more certainty, and a lot less work!
 * To the student, the ability to *reliably* compare their work-in-progress
 with the working solution.
 
@@ -28,6 +35,18 @@ such as IntelliJ/AndroidStudio, but this has not been tested yet. Soon!
 This program performs various substitutions on files. It creates a copy
 of each "xxxsolution" directory as "xxx" (which must not exist),
 making all the line-based changes shown below.
+
+== Pre-requisites
+
+This program is written in Java and thus requires a JVM.
+If there's any demand I can make up an installer for Windows, Mac, Linux, which
+will install a minimal JVM that the program has been tested with.
+My initial target was Java course developers, so the installer hasn't
+been needed up til now.
+
+Note that the program is not limited to working on Java programs; it could be
+used on any programming languages or, indeed, on anything that is text based
+(as all document files should be; see https://asciidoctor.org[AsciiDoc]).
 
 == Marking up the solution version of files
 
@@ -48,11 +67,11 @@ This must go before the //- ... //+ section.
 For example:
 
 ----
-"//T Compute in int variable i the value of the expression shown in the notes.
-"//R int i = 0;
-"//-",
-"int i = Math.sqrt(jNumber) * Math.cos(kNumber);
-"//+"
+//T Compute in int variable i the value of the expression shown in the notes.
+//R int i = 0;
+//-
+int i = Math.sqrt(jNumber) * Math.cos(kNumber);
+//+
 ----
 
 This will generate these two lines in the output file:
@@ -62,8 +81,21 @@ This will generate these two lines in the output file:
 int i = 0;
 ----
 
-Thus any following code that requires _i_ will compile, though not yield the correct
+Thus any following code that requires _i_ will compile, though obviously not yield the correct
 value until the student completes the ToDo step.
+
+=== Comment-Out Mode
+
+Lines of code can be left in the student version but commented out, using //C+ and //C-
+(these tags can be indented but each must otherwise be on a line by itself.
+
+	//C+
+	int x = 42;
+	//C-
+
+results in:
+
+	// int x = 42;
 
 === ToDo Items
 
@@ -80,14 +112,16 @@ It's easier on the eyes when editing the solution version, but makes the hint st
 == Text Substitution
 
 eXchange mode (//X) allows substitution of text with a block
+
 ----
 //X+ :::text to change:::replacement text
 Inside this block, any instance of "text to change" will be replaced with "replacement text" 
 //X-
 ----
+
 Note that it is a straight replacement and does not use regex's . Replacement starts immediately after the //X+ ... line and ends at //X-
 
-=== s/solution//g, or, Creating Output that doesn't say "solution"
+=== Creating Output that doesn't say "solution"
 
 We remove "solution" from filenames in most files including config files (so be warned: don't
 use the word 'solution' unless you mean it to go away in the non-solution version.
@@ -115,9 +149,9 @@ will come out in the student exercises version as
 
 	Look in C:/testdata
 
-== Files
+=== Which Files To Process?
 
-Changes are made only to files whose extensions are listed in 
+Changes are made only to files whose extensions are hard-coded in 
 the variable _SUB_TEXT_FILE_EXTENS_ in the program, which currently includes
 most sensible filename endings, but you might want to review it.
 
@@ -135,13 +169,13 @@ $ cat ex21solution/exclude-files.txt
 EventsListerTest.java
 ----
 
-In this example, the file _EventListerTest.java_ is the file the student must create,
+In this example, the file _EventsListerTest.java_ is the file the student must create,
 so neither it (nor, of course, the file _ignore-files.txt_) will be copied to the ex21 folder.
 
 Similarly, a list of files that must not be modified can be created in a file named __verbatim-files.txt__.
 Typical uses include binary files, and files containing markup that conflicts with that of this program.
 
-== Customizing The Substitutions
+=== Customizing The Substitutions
 
 The text substitutions are loaded from a properties file to be easy to change, but
 if you do so, the documentation above will not strictly apply!
@@ -154,7 +188,7 @@ re-generating the Jar file (see "Rebuilding" below). You could probably
 just put the new properties file on your CLASSPATH ahead of the jar file, 
 but this hasn't been tested.
 
-== Generating the Non-solution Versions from the Marked-up Solutions
+== Running MakeHandsOn: Generating the Student Versions
 
 After all that markup, you are ready to build the non-solution versions.
 Each folder should be named foosolution, e.g., ex41solution. This will create ex41.
@@ -162,7 +196,54 @@ Each folder should be named foosolution, e.g., ex41solution. This will create ex
 Then run "java -jar makehandson.jar *solution" in the crsXXX
 directory. This will create ex11 from ex11solution, and so on.
 
-There is a script in the scripts folder that may work for you if you do "mvn install".
+There is a Unix script in the scripts folder that may work for you if you do "mvn install".
+
+== Project Automation
+
+This program is the first step to automating creation of your students' workspace.
+The more you automate (and test), the less chance of errors creeping in!
+
+I normally do most of my maintenance on my https://openbsd.org[Unix] laptop,
+even though we normally run courses on MS-Windows.
+When it's tmie for a course rev, I do the work on the laptop, test, and commit the changes.
+Then I get the Lab to make up a new VM, install Java and the IDEs and other tools,
+or just start with the previous load.
+I just git clone or git pull a few repos, run a script, and barring the unforseen, I'm done.
+No need to fight with Windows any more than the bare minimum.
+
+The next step in automation is to have a Shell script (install git bash if on Windows) -
+I called mine _all-in_ - to do the following.
+Of course where I use maven, others may use gradle, make, etc.
+
+* git clone any auxilliary repos (sample files, etc.)
+* git pull in all the _solution_ folders
+* run _mvn test_ in the *solution* folders - no point going further
+	if the solutions are not in working order!
+* remove the ex?? folders
+* run makehandson on all *solution folders (omitting any that don't
+	require a base folder, such as multiple "bonus" solutions)
+* run _mvn compile_ in the ex?? folders
+* refresh the Eclipse projects (using a separate 
+* Undeploy server artifacts (if running tests deployed any)
+* Generate a timestamp file "about.html"
+
+You can see the full (possibly overblown) version of this automation, and my overall setup, in
+the _scripts_ folder of
+https://github.com/IanDarwin/CourseFiles936[the github repo for my Course 936].
+
+Learning Tree authors are urged to use the name _CourseFilesNNNN_ for the root
+of your workspace, _sourcecode_ for exercises and downows, and the naming convention
+
+	exNN/exNNSolution name for exercises;
+	donowNN/donowNNSolution name for short do-now projects.
+
+Doing this consistently makes it _much_ easier when combining work from multiple
+courses into a custom course load!
+
+Final note: have the discipline to *do not make any manual changes* after running
+your script, thinking you'll fix them "tomorrow." That "tomorrow" never comes.
+Fix the solution, and at least re-run _makehandson_ with that solution folder.
+The course grades you save may be your own!
 
 == Rebuilding the Program
 
