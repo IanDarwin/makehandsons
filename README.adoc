@@ -261,12 +261,12 @@ Or, using Maven, just do _mvn package_
 
 == Bugs/ToDos
 
-See the file TODO.txt
+See the file TODO.adoc
 
 == Modifying the Program
 
 Well, this is Github, so just fork it and hack away. If you make it better,
-send me a note and a pull request.
+send me a note and/or a pull request.
 
 Enjoy.
 
