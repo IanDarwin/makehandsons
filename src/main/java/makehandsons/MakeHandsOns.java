@@ -63,13 +63,10 @@ public class MakeHandsOns {
 	private final static Pattern COMMENTMODE_START = Pattern.compile("^\\s*//C\\+");
 	private final static Pattern COMMENTMODE_END = Pattern.compile("^\\s*//C\\-");
 
+	private final static Pattern REPLACE_TEXT = Pattern.compile("\\\\s*//R\\s*\\(.*\\)");
 	
 	private final static Pattern EXCHANGEMODE_START = Pattern.compile("\\s*//X\\+");
 	private final static Pattern EXCHANGEMODE_END = Pattern.compile("\\s*//X\\-");	
-	//-
-	/* This should not appear in the output */
-	//+
-	//R // This should appear, and is a test for the "cut mode" process in processText()
 
 	/** directories to ignore */
 	final static String[] IGNORE_DIRS = { 
@@ -385,13 +382,15 @@ public class MakeHandsOns {
 	 * @param lines The List of lines in the file
 	 * @param inputFile The input File, only for printing errors
 	 * @param modes The state flags wrapper
+	 * @return The list of modified lines.
 	 */
 	public List<String> processTextFileLines(List<String> lines, File inputFile,
 			TextModes modes) {
 		Map<String,String> replaceMap = new HashMap<String,String>();
 		List<String> output = new ArrayList<>();
 		if (tld == null) {
-			throw new RuntimeException("How you gat here?");
+			throw new IllegalStateException(
+				"processTextFileLines(): no TLD set!");
 		}
 		String defName = tld.getName();
 		boolean ppEating = false;
@@ -461,7 +460,7 @@ public class MakeHandsOns {
 			}			
 			output.add(modes.inCommentMode ? "//" + line : line);
 			if (!line.equals(oldLine)) {
-				log.fine(String.format("Match in this line [%s] -->[%s]", oldLine, line));
+				log.fine(String.format("Change in this line [%s] -->[%s]", oldLine, line));
 				modes.fileChanged = true;
 			}
 		}
