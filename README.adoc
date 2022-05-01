@@ -252,19 +252,21 @@ You can see the full (possibly overblown) version of this automation, and my ove
 the _scripts_ folder of
 https://github.com/IanDarwin/CourseFiles936[the github repo for my Course 936].
 
+Final note: have the discipline to *do not make any manual changes* after running
+your script, thinking you'll fix them "tomorrow." That "tomorrow" never comes.
+Fix the solution, and at least re-run _makehandson_ with that solution folder.
+The course grades you save may be your own!
+
+=== Learning Tree Specifics
+
 Learning Tree authors are urged to use the name _CourseFilesNNNN_ for the root
-of your workspace, _sourcecode_ for exercises and downows, and the naming convention
+of your workspace, _sourcecode_ for both exercises and downows, and the naming convention
 
 	exNN/exNNSolution name for exercises;
 	donowNN/donowNNSolution name for short do-now projects.
 
 Doing this consistently makes it _much_ easier when combining work from multiple
 courses into a custom course load!
-
-Final note: have the discipline to *do not make any manual changes* after running
-your script, thinking you'll fix them "tomorrow." That "tomorrow" never comes.
-Fix the solution, and at least re-run _makehandson_ with that solution folder.
-The course grades you save may be your own!
 
 == Rebuilding the Program
 
