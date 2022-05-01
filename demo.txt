@@ -1,6 +1,6 @@
 This is a text file. To run it, put it in a directory
-called ex99solution, and in the directory above that,
-run "makehandsons ex99solution".
+called ex99solution (exactly, because of the filename #if below),
+and in the directory above that, run "makehandsons ex99solution".
 
 //-
 These lines will not appear #1.
@@ -11,6 +11,13 @@ This line will appear #1.
 //-
 This line will not appear #2.
 //+
+
+# Start of R-gets-emptied test
+//-
+This should NOT appear in the output,
+and nothing else should either.
+//+
+# End of R-gets-emptied test
 
 #if ex99solution
 This will appear because of CPP-mode
