@@ -170,6 +170,17 @@ will come out in the student exercises version as
 
 	Look in C:/testdata
 
+=== Marking Up Python
+
+Untested, but you should be able to provide your own makehandsons.properties (on classpath)
+changing the lines like
+
+	//T =// TODO
+
+to
+
+	#T =# TODO
+
 === Marking Up XML Documents (and others that don't use // for comments)
 
 XML files don't allow // comments, so we have to be a bit creative. Just put the // comments
