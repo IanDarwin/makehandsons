@@ -170,6 +170,34 @@ will come out in the student exercises version as
 
 	Look in C:/testdata
 
+=== Marking Up XML Documents (and others that don't use // for comments)
+
+XML files don't allow // comments, so we have to be a bit creative. Just put the // comments
+on lines by themselves inside XML comments, and they'll be handled. For example, consider this input:
+
+	<!--
+	//T Add a menu item for the Settings activity
+	//-
+	-->
+	<item
+		android:id="@+id/menu_settings"
+		android:icon="@android:drawable/ic_menu_preferences"
+		android:title="@string/menu_str_settings"
+		app:showAsAction="always"/>
+	<!--
+	//+
+	-->
+
+
+When run, it produced this output:
+
+	<!--
+	// TODO Add a menu item for the Settings activity
+	--> 
+
+Not tested on other formats, but you can probably work something out.
+
+
 === Which Files To Process?
 
 Changes are made only to files whose extensions are hard-coded in 

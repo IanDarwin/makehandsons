@@ -473,11 +473,11 @@ public class MakeHandsOns {
 	 * @author Mike Way
 	 */
 	private void parseReplaceModeStart(Map<String,String> replaceMap, String line) {
-			// Slightly fragile removal of an XML comment end if there is one!
+		// Slightly fragile removal of an XML comment end if there is one!
 		line = line.replace("-->", "");
 		String[] tokens = line.split(":::");
 		if(tokens.length < 3) {
-				// Nasty hack to make sure there is a replace token
+			// Nasty hack to make sure there is a replace token
 			tokens = new String[] {tokens[0], tokens[1], ""};
 		}
 		replaceMap.put(tokens[1], tokens[2]);
