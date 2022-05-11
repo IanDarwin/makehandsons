@@ -138,6 +138,7 @@ public class MakeHandsOns {
 	MakeHandsOns() {
 		log.info("MakeHandsOns.MakeHandsOns()");
 
+		// Don't move this into static initializer as the filename will become parameterized.
 		try (InputStream is = getClass().getResourceAsStream(PROPERTIES_FILENAME)) {
 			if (is == null) {
 				throw new RuntimeException("Could not load " + PROPERTIES_FILENAME + " from classpath.");
