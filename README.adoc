@@ -130,7 +130,7 @@ Inside this block, any instance of "text to change" will be replaced with "repla
 
 Note that it is a straight replacement and does not use regex's . Replacement starts immediately after the //X+ ... line and ends at //X-
 
-=== Conditional Output
+=== Conditional Output ("cpp mode")
 
 The program implements a small subset of the C Pre-processor to allow conditional processing.
 
