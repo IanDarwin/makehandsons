@@ -120,7 +120,12 @@ It's easier on the eyes when editing the solution version, but makes the hint st
 
 === Text Substitution
 
-eXchange mode (//X) allows substitution of text with a block
+The following special variables are always substituted (names inspired by Apache Maven):
+
+* ${project.name} - the basename of the output (project) folder, e.g., ex43
+* ${solution.name} - the basename of the input (solution) folder, e.g., ex43solution
+
+Also, eXchange mode (//X) allows substitution of text with a block
 
 ----
 //X+ :::text to change:::replacement text
