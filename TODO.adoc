@@ -5,6 +5,8 @@
 Have the logfile contain the name of the new file with changes, not the solution version, so you can
 copy and paste to cat/more/edit the file more easily, to visually confirm how it looks.
 
+More (brief) comments on how the deeper parts work.
+
 == Options to add
 
 Option -c/--clobber to remove-by-default each top-level project (non-solution) directory before starting it.
@@ -22,6 +24,10 @@ Move CPP-mode variable 'ppEating' (local inside processTextFileLines) into TextM
 
 Option to omit generating certain folders, so you can have ex31solution and ex31bonussolution and only
 wind up with ex31 (though, probably better done in a controlling shell script?).
+
+== Medium Tasks
+
+Convert from passing List<String> to using Streams in e.g., processTextLines().
 
 == Harder Considerations
 
