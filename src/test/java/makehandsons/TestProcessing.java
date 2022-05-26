@@ -140,7 +140,6 @@ public class TestProcessing {
 
 		List<String> output = target.processTextFileLines(input, inputFile, modes);
 		assertEquals(6, output.size());
-		System.out.println(output.get(3)+ "===>" + "xmlns:tools=\"http://schemas.android.com/tools\"");
 		assertTrue(output.get(3).contains("xmlns:tools=\"http://schemas.android.com/tools\""));
 		assertTrue(output.get(5).contains("\\>"));
 	}	
@@ -161,5 +160,16 @@ public class TestProcessing {
 		assertEquals("Hello", output.get(0));
 		assertEquals("foo", output.get(1));
 		assertEquals("Goodbye", output.get(2));
+	}
+
+	@Test
+	public void testProcessTextLinesWithDollarMacro() {
+		List<String> input = Arrays.asList("= ${project.name}","See also ${solution.name}");
+		
+		List<String> output = target.processTextFileLines(input, inputFile, modes);
+		assertEquals("= inttest", output.get(0));
+		assertEquals("See also inttest", output.get(1));
+		assertChanged(modes);
+		assertFinished(modes);
 	}
 }

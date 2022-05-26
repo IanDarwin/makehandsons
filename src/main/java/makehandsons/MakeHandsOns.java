@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,6 +80,9 @@ public class MakeHandsOns {
 	/** JUL logger */
 	private static Logger log;
 
+	/** The current solution folder and project folder */
+	private static String currentSolution = "ex??solution", currentProject = "ex??";
+
 	static {
 
 		InputStream logStream = 
@@ -110,6 +114,8 @@ public class MakeHandsOns {
 						System.exit(42);
 					}
 					File fileArg = new File(arg);
+					currentSolution = fileArg.getName();
+					currentProject = currentSolution.replace(REMOVE_FROM_PATH, "");
 					prog.makeIgnoreList(fileArg);
 					prog.makeVerbatimList(fileArg);
 					prog.descendFileSystem(fileArg);
@@ -138,6 +144,7 @@ public class MakeHandsOns {
 	MakeHandsOns() {
 		log.info("MakeHandsOns.MakeHandsOns()");
 
+		// Don't move this into static initializer as the filename will become parameterized.
 		try (InputStream is = getClass().getResourceAsStream(PROPERTIES_FILENAME)) {
 			if (is == null) {
 				throw new RuntimeException("Could not load " + PROPERTIES_FILENAME + " from classpath.");
@@ -332,14 +339,7 @@ public class MakeHandsOns {
 		if (target.isDirectory()) {
 			dest = new File(dest, file.getName());
 		}
-		try (InputStream is = new FileInputStream(file);
-			OutputStream os = new FileOutputStream(dest);) {
-			int count = 0;		// the byte count
-			byte[] b = new byte[BLKSIZ];	// the bytes read from the file
-			while ((count = is.read(b)) != -1) {
-				os.write(b, 0, count);
-			}
-		}
+		Files.copy(file.toPath(), dest.toPath());
 	}
 	
 	/** Copy one TEXT file, with substitutions. */
@@ -434,6 +434,9 @@ public class MakeHandsOns {
 				modes.inCommentMode = modes.fileChanged = true;
 				continue;
 			}
+			// Start of replacements - do these first
+			line = line.replaceAll("\\$\\{project.name\\}", currentProject);
+			line = line.replaceAll("\\$\\{solution.name\\}", currentSolution);
 			if (modes.inExchangeMode) {
 				if (EXCHANGEMODE_START.matcher(line).find()) {
 					System.err.println("WARNING: " + inputFile + " has nested REPLACE_START codes");
@@ -473,11 +476,11 @@ public class MakeHandsOns {
 	 * @author Mike Way
 	 */
 	private void parseReplaceModeStart(Map<String,String> replaceMap, String line) {
-			// Slightly fragile removal of an XML comment end if there is one!
+		// Slightly fragile removal of an XML comment end if there is one!
 		line = line.replace("-->", "");
 		String[] tokens = line.split(":::");
 		if(tokens.length < 3) {
-				// Nasty hack to make sure there is a replace token
+			// Nasty hack to make sure there is a replace token
 			tokens = new String[] {tokens[0], tokens[1], ""};
 		}
 		replaceMap.put(tokens[1], tokens[2]);

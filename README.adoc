@@ -120,7 +120,12 @@ It's easier on the eyes when editing the solution version, but makes the hint st
 
 === Text Substitution
 
-eXchange mode (//X) allows substitution of text with a block
+The following special variables are always substituted (names inspired by Apache Maven):
+
+* ${project.name} - the basename of the output (project) folder, e.g., ex43
+* ${solution.name} - the basename of the input (solution) folder, e.g., ex43solution
+
+Also, eXchange mode (//X) allows substitution of text with a block
 
 ----
 //X+ :::text to change:::replacement text
@@ -130,7 +135,7 @@ Inside this block, any instance of "text to change" will be replaced with "repla
 
 Note that it is a straight replacement and does not use regex's . Replacement starts immediately after the //X+ ... line and ends at //X-
 
-=== Conditional Output
+=== Conditional Output ("cpp mode")
 
 The program implements a small subset of the C Pre-processor to allow conditional processing.
 
@@ -170,6 +175,45 @@ will come out in the student exercises version as
 
 	Look in C:/testdata
 
+=== Marking Up Python
+
+Untested, but you should be able to provide your own makehandsons.properties (on classpath)
+changing the lines like
+
+	//T =// TODO
+
+to
+
+	#T =# TODO
+
+=== Marking Up XML Documents (and others that don't use // for comments)
+
+XML files don't allow // comments, so we have to be a bit creative. Just put the // comments
+on lines by themselves inside XML comments, and they'll be handled. For example, consider this input:
+
+	<!--
+	//T Add a menu item for the Settings activity
+	//-
+	-->
+	<item
+		android:id="@+id/menu_settings"
+		android:icon="@android:drawable/ic_menu_preferences"
+		android:title="@string/menu_str_settings"
+		app:showAsAction="always"/>
+	<!--
+	//+
+	-->
+
+
+When run, it produced this output:
+
+	<!--
+	// TODO Add a menu item for the Settings activity
+	--> 
+
+Not tested on other formats, but you can probably work something out.
+
+
 === Which Files To Process?
 
 Changes are made only to files whose extensions are hard-coded in 
@@ -191,7 +235,7 @@ EventsListerTest.java
 ----
 
 In this example, the file _EventsListerTest.java_ is the file the student must create,
-so neither it (nor, of course, the file _ignore-files.txt_) will be copied to the ex21 folder.
+so neither it (nor, of course, the file _exclude-files.txt_) will be copied to the ex21 folder.
 
 Similarly, a list of files that must not be modified can be created in a file named __verbatim-files.txt__.
 Typical uses include binary files, and files containing markup that conflicts with that of this program.
@@ -252,19 +296,21 @@ You can see the full (possibly overblown) version of this automation, and my ove
 the _scripts_ folder of
 https://github.com/IanDarwin/CourseFiles936[the github repo for my Course 936].
 
+Final note: have the discipline to *do not make any manual changes* after running
+your script, thinking you'll fix them "tomorrow." That "tomorrow" never comes.
+Fix the solution, and at least re-run _makehandson_ with that solution folder.
+The course grades you save may be your own!
+
+=== Learning Tree Specifics
+
 Learning Tree authors are urged to use the name _CourseFilesNNNN_ for the root
-of your workspace, _sourcecode_ for exercises and downows, and the naming convention
+of your workspace, _sourcecode_ for both exercises and downows, and the naming convention
 
 	exNN/exNNSolution name for exercises;
 	donowNN/donowNNSolution name for short do-now projects.
 
 Doing this consistently makes it _much_ easier when combining work from multiple
 courses into a custom course load!
-
-Final note: have the discipline to *do not make any manual changes* after running
-your script, thinking you'll fix them "tomorrow." That "tomorrow" never comes.
-Fix the solution, and at least re-run _makehandson_ with that solution folder.
-The course grades you save may be your own!
 
 == Rebuilding the Program
 

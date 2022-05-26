@@ -2,32 +2,41 @@
 
 == Trivial fixes
 
-Make sure that the //R text is nullified when processing //-
+Have the logfile contain the name of the new file with changes, not the solution version, so you can
+copy and paste to cat/more/edit the file more easily, to visually confirm how it looks.
+
+More (brief) comments on how the deeper parts work.
 
 == Options to add
 
 Option -c/--clobber to remove-by-default each top-level project (non-solution) directory before starting it.
+
+Option -d/--delim to use a different comment lead-in (like "#" for Python, Awk, and many other Unix-based scripting languages).
 
 Option -h/--hints to run diff(1) on files that report changes and Generate HTML hints from the diffs.
 
 Option -o/--output to output into a different folder, for peeps that don't want their students to
 have access to the solutions, or who want to dole them out one at a time, etc.
 
-Option -l/--leadin to use a different comment lead-in (like "#" for Python, Awk, and many other Unix-based scripting languages).
+Option -p/--hash to use "#" as the comment lead-in, for Python, awk, perl, etc.
 
 Move CPP-mode variable 'ppEating' (local inside processTextFileLines) into TextModes.
 
 Option to omit generating certain folders, so you can have ex31solution and ex31bonussolution and only
-wind up with ex31 (though, probably better done in a controlling shell script).
+wind up with ex31 (though, probably better done in a controlling shell script?).
+
+== Medium Tasks
+
+Convert from passing List<String> to using Streams in e.g., processTextLines().
 
 == Harder Considerations
 
 Maybe a way to build several related projects from the same tree.
 For example, a main solution and a bonus solution.
 Or several solutions form the same codebase.
-Think cpp's #ifdef, m4, etc.
+Possible using cpp mode, but may need more work.
 
-Maybe another mode (sorry!): //K- and //K+ for stuff that students should remove in the exercise
+Maybe another mode (sorry!): //K- and //K+ for stuff that students should _remove_ in the exercise
 and thus should be omitted from the solution. ALAS, this would require rewriting the 
 Solution files as well as the student starting version files, which is just too dangerous!
 This would require us to go to the next level: Build both fooSolution and foo from fooMaster
