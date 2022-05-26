@@ -17,4 +17,4 @@ if [ ! -f ${JAR} ]; then
 	exit 1
 fi
 
-java -jar ${JAR} ${*-*solution}
+java -jar ${JAR} ${*}
