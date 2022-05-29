@@ -6,4 +6,4 @@ set JAR=%USERPROFILE%/.m2/repository/com/darwinsys/makehandsons/1.0-SNAPSHOT/mak
 
 java -jar %JAR% %*
 
-unset HOME 	# breaks Windows GIT
+set HOME=
