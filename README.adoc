@@ -149,11 +149,11 @@ This allows linked or symlinked files, which can certainly be convenient for mai
 
 === Creating Output that doesn't say "solution"
 
-We remove "solution" from filenames in most files including config files (so be warned: don't
+We remove "solution" from filenames and text file contents in most files including config files (so be warned: don't
 use the word 'solution' unless you mean it to go away in the non-solution version.
 It is case sensitive so you can refer to "the Solution" and have it work OK.
-This sounds painful but is required so that the Eclipse .project/.classpath
-files will work
+Alternately, see <<verbatim-files>> below.
+This "global" change is required so that the Eclipse .project/.classpath files will work.
 
 === Fixing Absolute Paths
 
@@ -237,6 +237,7 @@ EventsListerTest.java
 In this example, the file _EventsListerTest.java_ is the file the student must create,
 so neither it (nor, of course, the file _exclude-files.txt_) will be copied to the ex21 folder.
 
+[[verbatim-files]]
 Similarly, a list of files that must not be modified can be created in a file named __verbatim-files.txt__.
 Typical uses include binary files, and files containing markup that conflicts with that of this program.
 
