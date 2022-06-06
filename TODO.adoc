@@ -9,7 +9,7 @@ More (brief) comments on how the deeper parts work.
 
 == Options to add
 
-Option -c/--clobber to remove-by-default each top-level project (non-solution) directory before starting it.
+Option -c/--clobber (or -f/--force?) to remove-by-default each top-level project (non-solution) directory before starting it.
 
 Option -d/--delim to use a different comment lead-in (like "#" for Python, Awk, and many other Unix-based scripting languages).
 
@@ -26,6 +26,8 @@ Option to omit generating certain folders, so you can have ex31solution and ex31
 wind up with ex31 (though, probably better done in a controlling shell script?).
 
 == Medium Tasks
+
+Consider adding //R+ and //R- in addition to plain //R, for multi-line replace.
 
 Convert from passing List<String> to using Streams in e.g., processTextLines().
 
