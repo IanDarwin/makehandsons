@@ -1,5 +1,5 @@
+.idea
 build
 target
 inttest
-/makehandson.log.*
-.idea
+/makehandson.log*
