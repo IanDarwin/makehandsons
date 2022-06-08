@@ -21,10 +21,23 @@ public class TestProcessing {
 	final static File inputFile = new File("test file");
 
 	@Before
-	public void mehtUp() {
+	public void getUp() {
 		target = new MakeHandsOns();
 		MakeHandsOns.tld = new File("testing");
 		modes = new TextModes();
+	}
+
+	private void assertFinished(TextModes modes) {
+		assertFalse(modes.inCutMode);
+		assertFalse(modes.inCommentMode);
+		assertFalse(modes.inCppMode);
+	}
+
+	private void assertChanged(TextModes modes) {
+		assertTrue(modes.fileChanged);
+	}
+	private void assertNotChanged(TextModes modes) {
+		assertFalse(modes.fileChanged);
 	}
 
 	@Test
@@ -55,11 +68,11 @@ public class TestProcessing {
 	}
 
 	@Test
-	public void testCutModeXhtml() {
+	public void testCutModeXml() {
 		List<String> input = Arrays.asList(
-			"//-",
+			"<!-- //- -->",
 			"This should not appear in the output",
-			"//+",
+			"<!-- //+ -->",
 			"int i = 0;" // This is the online line that should appear
 			);
 		List<String> output = target.processTextFileLines(input, inputFile, modes);
@@ -85,17 +98,6 @@ public class TestProcessing {
 		assertFalse(output.toString().contains("should not appear"));
 	}
 
-	private void assertFinished(TextModes modes) {
-		assertFalse(modes.inCutMode);
-		assertFalse(modes.inCommentMode);
-	}
-
-	private void assertChanged(TextModes modes) {
-		assertTrue(modes.fileChanged);
-	}
-	private void assertNotChanged(TextModes modes) {
-		assertFalse(modes.fileChanged);
-	}
 
 	@Test
 	public void testReplacementMode() {
