@@ -29,6 +29,9 @@ public class MakeHandsOns {
 	/** The file extens that DO get replacements done */
 	final static String[] SUB_TEXT_FILE_EXTENS = {
 		".adoc",
+		".c",
+		".c#",
+		".cpp",
 		".gradle",
 		".html",
 		".java",
@@ -342,9 +345,7 @@ public class MakeHandsOns {
 		TextModes modes = new TextModes();
 		String path = file.getAbsolutePath().replace(REMOVE_FROM_PATH, "");
 		new File(path).getParentFile().mkdirs();
-		try (
-			PrintWriter pw = new PrintWriter(path);
-			) {
+		try (PrintWriter pw = new PrintWriter(path);) {
 			List<String> lines = Files.readAllLines(Path.of(path));
 			List<String> outLines = processTextFileLines(lines, file, modes);
 			for (String modLine : outLines) {
