@@ -142,7 +142,7 @@ public class MakeHandsOns {
 	MakeHandsOns() {
 		log.info("MakeHandsOns.MakeHandsOns()");
 
-		// Don't move this into static initializer as the filename will become parameterized.
+		// Don't move this into static initializer as the filename will someday become parameterized.
 		try (InputStream is = getClass().getResourceAsStream(PROPERTIES_FILENAME)) {
 			if (is == null) {
 				throw new RuntimeException("Could not load " + PROPERTIES_FILENAME + " from classpath.");
@@ -278,7 +278,7 @@ public class MakeHandsOns {
 		}
 	}
 
-	boolean isTextFile(String fileName) {
+	static boolean isTextFile(String fileName) {
 		for (String exten : SUB_TEXT_FILE_EXTENS) {
 			if (fileName.endsWith(exten))
 				return true;
@@ -346,22 +346,26 @@ public class MakeHandsOns {
 		String path = file.getAbsolutePath().replace(REMOVE_FROM_PATH, "");
 		new File(path).getParentFile().mkdirs();
 		try (PrintWriter pw = new PrintWriter(path);) {
-			List<String> lines = Files.readAllLines(Path.of(path));
+			List<String> lines = Files.readAllLines(file.toPath());
 			List<String> outLines = processTextFileLines(lines, file, modes);
-			for (String modLine : outLines) {
-				pw.println(modLine);
+			for (String line : outLines) {
+				pw.println(line);
 			}
+			pw.flush();
 		} catch (IOException e) {
 			System.err.printf("I/O Error on %s: %s%n", file, e);
 		} finally {
 			if (modes.fileChanged) {
-				log.info(file + " had change(s)"); // XXX run diff?
+				log.info(file + " had change(s)"); // XXX run diff, for hints?
 			}
 			if (modes.inCutMode) {
 				System.err.println("WARNING: " + file + " file ends in cut mode!");
 			}
 			if (modes.inCommentMode) {
 				System.err.println("WARNING: " + file + " file ends in commenting-out mode!");
+			}
+			if (modes.inCppMode) {
+				System.err.println("WARNING: " + file + " file ends in #if mode!");
 			}
 		}
 	}
@@ -384,23 +388,24 @@ public class MakeHandsOns {
 				"processTextFileLines(): no TLD set!");
 		}
 		String projectName = tld.getName();
-		boolean ppEating = false;
+		modes.inCppMode = false;
 		for (String line : lines) {
 			String oldLine = line;
-			// Must do #if first so it can control others
+
+			// Must do #if/#endif FIRST so it can control others
 			if (line.startsWith("#endif")) {
 				// Test for out of place endif here?
-				ppEating = false;
+				modes.inCppMode = false;
 				continue;
 			}
 			Matcher m = IFDEF_START.matcher(line);
 			if (m.lookingAt()) {
 				String ifdefName = m.group(1);
-				ppEating = !ifdefName.equals(projectName);
-				System.out.println("ifdefName, ppEating = " + ifdefName + " " + ppEating);
+				modes.inCppMode = !ifdefName.equals(projectName);
 				continue;
 			}
-			if (ppEating) {
+			if (modes.inCppMode) {
+				modes.fileChanged = true; // we cut this line
 				continue;
 			}
 			if (modes.inCutMode) {
