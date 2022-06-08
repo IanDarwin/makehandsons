@@ -69,7 +69,7 @@ and not filling in the student's TODOs at this stage!).
 	//- through to //+ inclusive are DELETED from the output
 	
 The //- and //+ must each be on a line by itself; indentation is allowed but
-no other characters before or after.
+other characters before or after must be set off with whitespace.
 
 If //R has been given (see below), it will replace the cut lines.
 
