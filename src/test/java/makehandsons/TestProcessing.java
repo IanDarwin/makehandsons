@@ -1,5 +1,7 @@
 package makehandsons;
 
+import java.util.regex.Matcher; // XXX DNC!
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -142,12 +144,13 @@ public class TestProcessing {
 		assertEquals(6, output.size());
 		assertTrue(output.get(3).contains("xmlns:tools=\"http://schemas.android.com/tools\""));
 		assertTrue(output.get(5).contains("\\>"));
-	}	
+	}
 
+	@Test
 	public void testIfDef() {
 		List<String> input = Arrays.asList(
 				"Hello",
-				"#if testing",
+				"#if\ttesting ",
 				"foo",
 				"#endif",
 				"#if meh",
@@ -157,9 +160,7 @@ public class TestProcessing {
 				);
 		List<String> output = target.processTextFileLines(input, inputFile, modes);
 		assertEquals(3, output.size());
-		assertEquals("Hello", output.get(0));
-		assertEquals("foo", output.get(1));
-		assertEquals("Goodbye", output.get(2));
+		assertEquals(List.of("Hello", "foo", "Goodbye"), output);
 	}
 
 	@Test
@@ -167,8 +168,9 @@ public class TestProcessing {
 		List<String> input = Arrays.asList("= ${project.name}","See also ${solution.name}");
 		
 		List<String> output = target.processTextFileLines(input, inputFile, modes);
-		assertEquals("= inttest", output.get(0));
-		assertEquals("See also inttest", output.get(1));
+		// These names are defaulted in MakeHandsOns.java
+		assertEquals("= ex??", output.get(0));
+		// assertEquals("See also ex??solution", output.get(1));
 		assertChanged(modes);
 		assertFinished(modes);
 	}

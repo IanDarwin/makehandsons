@@ -1,22 +1,12 @@
 package makehandsons;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /** The MakeHandsOns program looks through the given
@@ -57,17 +47,21 @@ public class MakeHandsOns {
 	
 	/** The part of the directory name that gets removed. */
 	final static String REMOVE_FROM_PATH = "solution";
-	
-	private final static Pattern CUTMODE_START = Pattern.compile("^\\s*//-$");
-	private final static Pattern CUTMODE_END = Pattern.compile("^\\s*//\\+$");
 
-	private final static Pattern COMMENTMODE_START = Pattern.compile("^\\s*//C\\+");
-	private final static Pattern COMMENTMODE_END = Pattern.compile("^\\s*//C\\-");
-
-	private final static Pattern REPLACE_TEXT = Pattern.compile("\\\\s*//R\\s*\\(.*\\)");
+	// Main patterns, but SEE ALSO src/main/resources/makehandsons.properties
 	
-	private final static Pattern EXCHANGEMODE_START = Pattern.compile("\\s*//X\\+");
-	private final static Pattern EXCHANGEMODE_END = Pattern.compile("\\s*//X\\-");	
+	private final static Pattern CUTMODE_START = Pattern.compile("^\\s*//-\\s*$");
+	private final static Pattern CUTMODE_END = Pattern.compile("^\\s*//\\+\\s*$");
+
+	private final static Pattern COMMENTMODE_START = Pattern.compile("^\\s*//C\\+\\s*");
+	private final static Pattern COMMENTMODE_END = Pattern.compile("^\\s*//C\\-\\s*");
+
+	private final static Pattern REPLACE_TEXT = Pattern.compile("\\\\s*//R\\s*(.*)");
+	
+	private final static Pattern EXCHANGEMODE_START = Pattern.compile("\\s*//X\\+\\s*");
+	private final static Pattern EXCHANGEMODE_END = Pattern.compile("\\s*//X\\-\\s*");	
+
+	private final static Pattern IFDEF_START = Pattern.compile("^.if\\s+([a-z]+)");
 
 	/** directories to ignore */
 	final static String[] IGNORE_DIRS = { 
@@ -135,6 +129,7 @@ public class MakeHandsOns {
 		//C+ -> enter comment-out mode, up to //C-
 		//X+ :::textToReplace:::replacementText-> enter exchange mode
 		//X- -> leave exchange (text replacement) mode		
+		#if project_name -> Like cpp #ifdef, end with #endif
 		""";
 	
 	private static void doHelp() {
@@ -349,13 +344,8 @@ public class MakeHandsOns {
 		new File(path).getParentFile().mkdirs();
 		try (
 			PrintWriter pw = new PrintWriter(path);
-			BufferedReader is = new BufferedReader(new FileReader(file));
 			) {
-			String aline;
-			List<String> lines = new ArrayList<>();
-			while ((aline = is.readLine()) != null) {
-				lines.add(aline);
-			}
+			List<String> lines = Files.readAllLines(Path.of(path));
 			List<String> outLines = processTextFileLines(lines, file, modes);
 			for (String modLine : outLines) {
 				pw.println(modLine);
@@ -392,16 +382,21 @@ public class MakeHandsOns {
 			throw new IllegalStateException(
 				"processTextFileLines(): no TLD set!");
 		}
-		String defName = tld.getName();
+		String projectName = tld.getName();
 		boolean ppEating = false;
 		for (String line : lines) {
 			String oldLine = line;
+			// Must do #if first so it can control others
 			if (line.startsWith("#endif")) {
+				// Test for out of place endif here?
 				ppEating = false;
 				continue;
 			}
-			if (line.startsWith("#if ")) {
-				ppEating = !line.endsWith(defName);
+			Matcher m = IFDEF_START.matcher(line);
+			if (m.lookingAt()) {
+				String ifdefName = m.group(1);
+				ppEating = !ifdefName.equals(projectName);
+				System.out.println("ifdefName, ppEating = " + ifdefName + " " + ppEating);
 				continue;
 			}
 			if (ppEating) {
