@@ -53,8 +53,8 @@ public class MakeHandsOns {
 
 	// Main patterns, but SEE ALSO src/main/resources/makehandsons.properties
 	
-	private final static Pattern CUTMODE_START = Pattern.compile("^\\s*//-\\s*$");
-	private final static Pattern CUTMODE_END = Pattern.compile("^\\s*//\\+\\s*$");
+	private final static Pattern CUTMODE_START = Pattern.compile("\\s*//-\\s*");
+	private final static Pattern CUTMODE_END = Pattern.compile("\\s*//\\+\\s*");
 
 	private final static Pattern COMMENTMODE_START = Pattern.compile("^\\s*//C\\+\\s*");
 	private final static Pattern COMMENTMODE_END = Pattern.compile("^\\s*//C\\-\\s*");
