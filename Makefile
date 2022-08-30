@@ -8,8 +8,6 @@ docs:
 	mv README.html /tmp
 install:
 	mvn -DskipTests clean package install assembly:single
-	@-rm -f ~/lib/makehandsons*.jar
-	# cp target/makehandsons-*-jar-with-dependencies.jar ~/lib/makehandsons.jar
 	copy target/makehandsons-*-jar-with-dependencies.jar %USERPROFILE%\lib\makehandsons.jar
 	copy scripts\* %USERPROFILE%/bin/
 clean:
