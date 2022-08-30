@@ -9,7 +9,8 @@ docs:
 install:
 	mvn clean package install assembly:single
 	@-rm -f ~/lib/makehandsons*.jar
-	cp target/makehandsons-*-jar-with-dependencies.jar ~/lib/makehandsons.jar
-	cp scripts/* ~/bin/
+	# cp target/makehandsons-*-jar-with-dependencies.jar ~/lib/makehandsons.jar
+	copy target/makehandsons-*-jar-with-dependencies.jar %USERPROFILE%\lib\makehandsons.jar
+	copy scripts\* %USERPROFILE%/bin/
 clean:
 	@rm -f makehandsons.log*
