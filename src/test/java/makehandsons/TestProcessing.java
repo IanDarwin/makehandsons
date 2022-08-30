@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.Ignore;
 
@@ -21,10 +22,23 @@ public class TestProcessing {
 	final static File inputFile = new File("test file");
 
 	@Before
-	public void mehtUp() {
+	public void getUp() {
 		target = new MakeHandsOns();
 		MakeHandsOns.tld = new File("testing");
 		modes = new TextModes();
+	}
+
+	private void assertFinished(TextModes modes) {
+		assertFalse(modes.inCutMode);
+		assertFalse(modes.inCommentMode);
+		assertFalse(modes.inCppMode);
+	}
+
+	private void assertChanged(TextModes modes) {
+		assertTrue(modes.fileChanged);
+	}
+	private void assertNotChanged(TextModes modes) {
+		assertFalse(modes.fileChanged);
 	}
 
 	@Test
@@ -55,11 +69,11 @@ public class TestProcessing {
 	}
 
 	@Test
-	public void testCutModeXhtml() {
+	public void testCutModeXml() {
 		List<String> input = Arrays.asList(
-			"//-",
+			"<!-- //- -->",
 			"This should not appear in the output",
-			"//+",
+			"<!-- //+ -->",
 			"int i = 0;" // This is the online line that should appear
 			);
 		List<String> output = target.processTextFileLines(input, inputFile, modes);
@@ -85,17 +99,6 @@ public class TestProcessing {
 		assertFalse(output.toString().contains("should not appear"));
 	}
 
-	private void assertFinished(TextModes modes) {
-		assertFalse(modes.inCutMode);
-		assertFalse(modes.inCommentMode);
-	}
-
-	private void assertChanged(TextModes modes) {
-		assertTrue(modes.fileChanged);
-	}
-	private void assertNotChanged(TextModes modes) {
-		assertFalse(modes.fileChanged);
-	}
 
 	@Test
 	public void testReplacementMode() {
@@ -123,7 +126,6 @@ public class TestProcessing {
 
 		List<String> output = target.processTextFileLines(input, inputFile, modes);
 		assertEquals(2, output.size());
-		output.forEach(System.out::println);
 		assertTrue(output.get(0).contains("int i = 0;"));
 		assertTrue(output.get(0).contains("With This"));
 		assertTrue(output.get(1).contains("int i = 1;"));
@@ -164,14 +166,14 @@ public class TestProcessing {
 		assertEquals(List.of("Hello", "foo", "Goodbye"), output);
 	}
 
-	@Ignore @Test
+	@Test @Ignore // XXX
 	public void testProcessTextLinesWithDollarMacro() {
 		List<String> input = Arrays.asList("= ${project.name}","See also ${solution.name}");
 		
 		List<String> output = target.processTextFileLines(input, inputFile, modes);
 		// These names are defaulted in MakeHandsOns.java
 		assertEquals("= ex??", output.get(0));
-		// assertEquals("See also ex??solution", output.get(1));
+		assertEquals("See also ex??solution", output.get(1));
 		assertChanged(modes);
 		assertFinished(modes);
 	}

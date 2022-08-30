@@ -39,12 +39,13 @@ public class SystemTest {
 	}
 	
 	@Ignore @Test
-	public void testDetails() throws Exception {
+	public void testWholeThing() throws Exception {
 
 		System.out.println("SysProp('os.name') = " +
 			System.getProperty("os.name"));
-		// In case somebody forgot diff when installing cygwin
+		// In case somebody forgot 'diff' when installing cygwin
 		if (System.getProperty("os.name").startsWith("Windows")) {
+			System.err.println("Not able to run testDetails() on MS-Windows");
 			return;
 		}
 		

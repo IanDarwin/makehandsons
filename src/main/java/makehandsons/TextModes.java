@@ -10,4 +10,5 @@ class TextModes {
 	boolean inCommentMode = false;
 	boolean fileChanged = false;
 	boolean inExchangeMode = false;
+	boolean inCppMode = false;
 }

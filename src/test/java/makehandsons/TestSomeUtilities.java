@@ -7,18 +7,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TestSomeUtilities {
-	private MakeHandsOns target;
-
-	@Before
-	public void mehtUp() {
-		target = new MakeHandsOns();
-	}
 
 	@Test
 	public void testIsTextFileName() {
-		assertTrue(target.isTextFile("foo/bar.java"));
-		assertTrue(target.isTextFile("foo/abc.txt"));
-		assertTrue(target.isTextFile("foo/Readme.adoc"));
-		assertFalse(target.isTextFile("Llewelynn.class"));
+		assertTrue(MakeHandsOns.isTextFile("foo/bar.java"));
+		assertTrue(MakeHandsOns.isTextFile("foo/abc.txt"));
+		assertTrue(MakeHandsOns.isTextFile("foo/Readme.adoc"));
+		assertTrue(MakeHandsOns.isTextFile("foo/reboot.cpp"));
+		assertFalse(MakeHandsOns.isTextFile("Llewelynn.class"));
 	}
 }
