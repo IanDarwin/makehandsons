@@ -1,3 +1,2 @@
-	mvn -DskipTests clean package install assembly:single
-	copy target\makehandsons-*-jar-with-dependencies.jar %USERPROFILE%\lib\makehandsons.jar
-	copy scripts\* %USERPROFILE%/bin/
+	copy target\makehandsons-1.0-SNAPSHOT-jar-with-dependencies.jar %USERPROFILE%\lib\makehandsons.jar
+	copy scripts\* %USERPROFILE%\bin
