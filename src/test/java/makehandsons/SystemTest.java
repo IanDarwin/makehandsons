@@ -37,7 +37,7 @@ public class SystemTest {
 		
 	}
 	
-	@Test
+	@Ignore @Test
 	public void testDetails() throws Exception {
 
 		System.out.println("SysProp('os.name') = " +
