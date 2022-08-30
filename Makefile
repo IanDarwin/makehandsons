@@ -7,7 +7,7 @@ docs:
 	# This should work anywhere though:
 	mv README.html /tmp
 install:
-	mvn clean package install assembly:single
+	mvn -DskipTests clean package install assembly:single
 	@-rm -f ~/lib/makehandsons*.jar
 	# cp target/makehandsons-*-jar-with-dependencies.jar ~/lib/makehandsons.jar
 	copy target/makehandsons-*-jar-with-dependencies.jar %USERPROFILE%\lib\makehandsons.jar
