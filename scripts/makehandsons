@@ -5,12 +5,7 @@
 # set -x
 
 # The possibility of portability.
-case $(UNAME) in
-	cyg*|CYG*)	# Alas, specific to our setup.
-		HOME='C:/Users/student';;
-esac
-
-JAR=${HOME}/.m2/repository/com/darwinsys/makehandsons/1.0-SNAPSHOT/makehandsons-1.0-SNAPSHOT.jar
+JAR=${HOME}/lib/makehandsons.jar
 
 if [ ! -f ${JAR} ]; then
 	echo "Jar not found, install ${JAR} using 'mvn install' in makehandson source" >&2

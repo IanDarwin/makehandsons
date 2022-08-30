@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 
 public class TestProcessing {
 	TextModes modes;
@@ -163,7 +164,7 @@ public class TestProcessing {
 		assertEquals(List.of("Hello", "foo", "Goodbye"), output);
 	}
 
-	@Test
+	@Ignore @Test
 	public void testProcessTextLinesWithDollarMacro() {
 		List<String> input = Arrays.asList("= ${project.name}","See also ${solution.name}");
 		

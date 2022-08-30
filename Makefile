@@ -8,7 +8,8 @@ docs:
 	mv README.html /tmp
 install:
 	mvn clean package install assembly:single
-	@rm -f ~/lib/makehandsons*.jar
-	cp target/makehandsons-*-jar-with-dependencies.jar ~/lib/
+	@-rm -f ~/lib/makehandsons*.jar
+	cp target/makehandsons-*-jar-with-dependencies.jar ~/lib/makehandsons.jar
+	cp scripts/* ~/bin/
 clean:
 	@rm -f makehandsons.log.?

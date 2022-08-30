@@ -2,7 +2,7 @@
 
 set HOME='C:/Users/student'
 
-set JAR=%USERPROFILE%/.m2/repository/com/darwinsys/makehandsons/1.0-SNAPSHOT/makehandsons-1.0-SNAPSHOT.jar
+set JAR=%USERPROFILE%/lib/makehandsons.jar
 
 java -jar %JAR% %*
 
