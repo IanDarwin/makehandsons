@@ -73,6 +73,9 @@ public class MakeHandsOns {
 
 	/** Map from a compiled regex Pattern to its replacement String */
 	static Map<Pattern,String> pattMap;
+
+	/** List of exceptions that contain "solution" but must not be converted */
+	List<String> nonSolutions = List.of("dependencyResolutionManagement");
 	
 	/** JUL logger */
 	private static Logger log;
