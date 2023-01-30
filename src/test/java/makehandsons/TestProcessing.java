@@ -168,7 +168,7 @@ public class TestProcessing {
 
 	@Test @Ignore // XXX
 	public void testProcessTextLinesWithDollarMacro() {
-		List<String> input = Arrays.asList("= ${project.name}","See also ${solution.name}");
+		List<String> input = Arrays.asList("= ${output.name}","See also ${solution.name}");
 		
 		List<String> output = target.processTextFileLines(input, inputFile, modes);
 		// These names are defaulted in MakeHandsOns.java

@@ -150,7 +150,7 @@ public class MakeHandsOns {
 		//C+ -> enter comment-out mode, up to //C-
 		//X+ :::textToReplace:::replacementText-> enter exchange mode
 		//X- -> leave exchange (text replacement) mode		
-		#if project_name -> Like cpp #ifdef, end with #endif
+		#if ouput_name -> Like cpp #ifdef, end with #endif
 		""";
 	
 	private static void doHelp() {
@@ -454,7 +454,7 @@ public class MakeHandsOns {
 				continue;
 			}
 			// Start of replacements - do these first
-			line = line.replaceAll("\\$\\{project.name\\}", currentProject);
+			line = line.replaceAll("\\$\\{output.name\\}", currentProject);
 			line = line.replaceAll("\\$\\{solution.name\\}", currentSolution);
 			if (modes.inExchangeMode) {
 				if (EXCHANGEMODE_START.matcher(line).find()) {

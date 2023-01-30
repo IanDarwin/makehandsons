@@ -122,8 +122,11 @@ It's easier on the eyes when editing the solution version, but makes the hint st
 
 The following special variables are always substituted (names inspired by Apache Maven):
 
-* ${project.name} - the basename of the output (project) folder, e.g., ex43
+* ${output.name} - the basename of the output (project) folder, e.g., ex43
 * ${solution.name} - the basename of the input (solution) folder, e.g., ex43solution
+
+**N.B.** Prior to 2023-02, the above were project.name and solution.name;
+the former was changed as it broke all Android projects from that time period.
 
 Also, eXchange mode (//X) allows substitution of text with a block
 
