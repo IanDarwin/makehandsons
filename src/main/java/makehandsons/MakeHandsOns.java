@@ -42,6 +42,7 @@ public class MakeHandsOns {
 		".jsp",
 		".json",
 		".kt",		// kotlin
+		".md",
 		".project",
 		".properties",
 		".rc",
@@ -74,7 +75,15 @@ public class MakeHandsOns {
 
 	/** directories to ignore */
 	final static String[] IGNORE_DIRS = { 
-		"CVS", ".svn", ".git", ".metadata", "bin", "target", "build"
+		"bin",
+		"build",
+		"CVS",
+		".dart_tool",
+		".git",
+		".idea",
+		".metadata",
+		".svn",
+		"target",
 	};
 
 	/** Map from a compiled regex Pattern to its replacement String */
