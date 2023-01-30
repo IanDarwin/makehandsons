@@ -31,13 +31,17 @@ public class MakeHandsOns {
 		".adoc",
 		".c",
 		".c#",
+		".c++",
 		".cpp",
+		".dart",
 		".gradle",
 		".html",
+		".iml",		// IntelliJ Metadata File
 		".java",
 		".jsf",
 		".jsp",
 		".json",
+		".kt",		// kotlin
 		".project",
 		".properties",
 		".txt",
