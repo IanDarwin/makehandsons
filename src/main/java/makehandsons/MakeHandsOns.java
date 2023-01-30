@@ -40,9 +40,11 @@ public class MakeHandsOns {
 		".json",
 		".project",
 		".properties",
+		".rc",
 		".txt",
 		".xhtml",
 		".xml",
+		".yaml",
 	};
 	
 	/** tld == Top Level Directory */
