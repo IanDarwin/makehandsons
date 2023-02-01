@@ -114,7 +114,7 @@ public class MakeHandsOns {
 	}
 
 	public static void main(String[] args) {
-		System.err.println("MakeHandsOns Processing started");
+		log.info("MakeHandsOns Processing started");
 		try {
 			MakeHandsOns prog = new MakeHandsOns();
 			if (args.length == 0) {
@@ -131,6 +131,12 @@ public class MakeHandsOns {
 					File fileArg = new File(arg);
 					currentSolution = fileArg.getName();
 					currentProject = currentSolution.replace(REMOVE_FROM_PATH, "");
+					if (new File(currentProject).exists()) {
+						System.err.println("ERROR: " + currentProject + " ALREADY EXISTS");
+						continue;
+					} else {
+						log.info("Starting " + fileArg);
+					}
 					prog.makeIgnoreList(fileArg);
 					prog.makeVerbatimList(fileArg);
 					prog.descendFileSystem(fileArg);
